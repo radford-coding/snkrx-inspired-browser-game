@@ -4,20 +4,22 @@
 
 const snek = new Snek();
 
+const game = {
+    difficulty: 1,
+    isPlaying: true,
+    audioMuted: true,
+    mouseControl: false,
+    arena: 1,
+    wave: 1,
+    maxWave: 3,
+    snake: [],
+};
+
 /*---------- Variables (state) ---------*/
 
-let audioMuted = false;
-let mouseControl = false;
 let rightPressed = false;
 let leftPressed = false;
-let isPlaying = true;
-let difficulty = 1;
 const mouse = {x: 100, y: 100};
-let game = {};
-
-
-// setInterval(draw, 0);
-
 
 /*----- Cached Element References  -----*/
 
@@ -29,7 +31,7 @@ mouseIcon.style.filter = 'invert(30%)'; // initial
 
 const audioOn = document.getElementById('sound-on');
 const audioOff = document.getElementById('sound-off');
-audioOff.style.filter = 'invert(30%)'; // initial
+audioOn.style.filter = 'invert(30%)'; //* initial state matches game.audioMuted
 
 const difficultyMinus = document.getElementById('difficulty-minus');
 const difficultyPlus = document.getElementById('difficulty-plus');
@@ -57,21 +59,33 @@ const handleKeyUp = function (e) {
 };
 
 const showDifficulty = function() {
-    difficulty = Math.max(1, Math.min(10, difficulty));
-    difficultyLevel.innerText = difficulty;
-    difficultyLevel.style.color = difficultyColors[difficulty - 1];
-    gameContainer.style.backgroundColor = difficultyColors[difficulty - 1];
-}();
+    game.difficulty = Math.max(1, Math.min(10, game.difficulty));
+    difficultyLevel.innerText = game.difficulty;
+    difficultyLevel.style.color = difficultyColors[game.difficulty - 1];
+    gameContainer.style.backgroundColor = difficultyColors[game.difficulty - 1];
+};
+showDifficulty();
 
 const handleMouseMove = function(e) {
-    if (mouseControl) {
+    if (game.mouseControl) {
         mouse.x = e.clientX - canvas.getBoundingClientRect().left;
         mouse.y = e.clientY - canvas.getBoundingClientRect().top;
     };
 };
 
+const bad = new Enemy();
+
+//! add a few new units
+game.snake.push(new Unit('Rogue'));
+game.snake.push(new Unit('Wizard'));
+game.snake.push(new Unit('Swordsman'));
+game.snake.push(new Unit('Curser'));
+game.snake.push(new Unit('Spawner'));
+game.snake.push(new Unit('Ranger'));
+game.snake.push(new Unit('Vagrant'));
+
 const draw = function() {
-    if (isPlaying) {
+    if (game.isPlaying) {
         clearCanvas();
         //! temporary
         if (rightPressed) {
@@ -79,12 +93,13 @@ const draw = function() {
         } else if (leftPressed) {
             snek.angle -= snek.turn;
         };
-        if (mouseControl) {
+        if (game.mouseControl) {
             snek.angle += calcChaseIncrement(snek.x, snek.y, snek.angle, mouse.x, mouse.y, snek.turn);
         };
-        snek.draw();
+        snek.draw(); //!
+        snek.drawTrail();
         snek.move();
-        requestAnimationFrame(draw);
+        requestAnimationFrame(draw); //! consider setInterval()
     };
 };
 draw();
@@ -93,43 +108,43 @@ draw();
 /*----------- Event Listeners ----------*/
 
 [mouseIcon, keyboardIcon].forEach(b => b.addEventListener('click', (e) => {
-    if (mouseControl) {
+    if (game.mouseControl) {
         keyboardIcon.style.filter = 'invert(100%)';
         mouseIcon.style.filter = 'invert(30%)';
-        mouseControl = false;
+        game.mouseControl = false;
     } else {
         mouseIcon.style.filter = 'invert(100%)';
         keyboardIcon.style.filter = 'invert(30%)';
-        mouseControl = true;
+        game.mouseControl = true;
     };
 }));
 
 [audioOn, audioOff].forEach(b => b.addEventListener('click', (e) => {
-    if (audioMuted) {
+    if (game.audioMuted) {
         audioOn.style.filter = 'invert(100%)';
         audioOff.style.filter = 'invert(30%)';
-        audioMuted = false;
+        game.audioMuted = false;
     } else {
         audioOff.style.filter = 'invert(100%)';
         audioOn.style.filter = 'invert(30%)';
-        audioMuted = true;
+        game.audioMuted = true;
     };
 }));
 
 difficultyMinus.addEventListener('click', () => {
-    difficulty--;
+    game.difficulty--;
     showDifficulty();
 });
 
 difficultyPlus.addEventListener('click', () => {
-    difficulty++;
+    game.difficulty++;
     showDifficulty();
 });
 
 canvas.addEventListener('mousemove', handleMouseMove);
 
 settingsIcon.addEventListener('click', () => {
-    isPlaying = !isPlaying
+    game.isPlaying = !game.isPlaying
     draw();
 });
 

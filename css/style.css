@@ -17,7 +17,7 @@ body {
     background-color: var(--bg);
     display: grid;
     grid-template-columns: minmax(24px, 1fr) 8fr 1fr;
-    grid-template-rows: minmax(48px, 1fr) 10fr minmax(48px, 1fr);
+    /* grid-template-rows: minmax(48px, 1fr) 10fr minmax(48px, 1fr); */
     font-family: "Geo", serif;
     font-weight: 400;
     font-style: normal;
@@ -40,7 +40,8 @@ header {
     background-color: var(--gray);
     border-radius: 5px;
     grid-column: 2 / span 1;
-    display: inline-block;
+    display: flex;
+    justify-content: space-between;
     color: var(--white);
     padding: 0 10px;
 }
@@ -78,8 +79,8 @@ nav ul li {
 
 #settings:hover {
     cursor: pointer;
-    animation: spin .7s linear 30;
-    -webkit-animation: spin .7s linear 30;
+    animation: spin 1.7s linear 30;
+    -webkit-animation: spin 1.7s linear 30;
 }
 
 @keyframes spin {
@@ -133,6 +134,7 @@ nav p {
     justify-content: center;
     align-items: center;
     margin: 10px;
+    aspect-ratio: 1;
 }
 
 #game-area {
@@ -144,6 +146,7 @@ nav p {
 
 
 footer {
+    height: 8vw;
     background-color: var(--gray);
     border-radius: 5px;
     grid-column: 2 / span 1;
@@ -153,6 +156,6 @@ footer {
 
 footer > div {
     border-radius: 5px;
-    margin: 5px;
+    margin: 0.5vw;
     background-color: var(--bg);
 }
