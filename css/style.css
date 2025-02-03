@@ -1,0 +1,21 @@
+body {
+    --bg1: #303030;
+    --bg2: #2E2E2E;
+    --red: #E91E39;
+    --orange: #F06F22;
+    --yellow: #FACF00;
+    --green: #8BBF40;
+    --blue: #009BD6;
+    --purple: #8E559E;
+    --white: #DADADA;
+    background-color: var(--bg1);
+}
+
+
+
+
+
+
+
+
+
