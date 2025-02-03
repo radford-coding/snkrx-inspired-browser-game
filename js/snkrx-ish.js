@@ -2,15 +2,14 @@
 
 /*-------------- Constants -------------*/
 
-const canvas = document.getElementById('game-area');
-canvas.width = canvas.clientWidth;
-canvas.height = canvas.clientHeight;
-const context = canvas.getContext('2d');
+const snek = new Snek();
 
 /*---------- Variables (state) ---------*/
 
 let audioMuted = false;
 let mouseControl = false;
+let rightPressed = false;
+let leftPressed = false;
 let isPlaying = true;
 let difficulty = 1;
 const mouse = {x: 100, y: 100};
@@ -41,8 +40,20 @@ const gameContainer = document.querySelector('.game-area');
 
 /*-------------- Functions -------------*/
 
-const clearCanvas = function() {
-    context.clearRect(0, 0, canvas.width, canvas.height);
+const handleKeyDown = function (e) {
+    if (e.key === 'Right' || e.key === 'ArrowRight' || e.key === 'd') {
+        rightPressed = true;
+    } else if (e.key === 'Left' || e.key === 'ArrowLeft' || e.key === 'a') {
+        leftPressed = true;
+    };
+};
+
+const handleKeyUp = function (e) {
+    if (e.key === 'Right' || e.key === 'ArrowRight' || e.key === 'd') {
+        rightPressed = false;
+    } else if (e.key === 'Left' || e.key === 'ArrowLeft' || e.key === 'a') {
+        leftPressed = false;
+    };
 };
 
 const showDifficulty = function() {
@@ -50,34 +61,33 @@ const showDifficulty = function() {
     difficultyLevel.innerText = difficulty;
     difficultyLevel.style.color = difficultyColors[difficulty - 1];
     gameContainer.style.backgroundColor = difficultyColors[difficulty - 1];
-};
-showDifficulty();
+}();
 
 const handleMouseMove = function(e) {
     if (mouseControl) {
         mouse.x = e.clientX - canvas.getBoundingClientRect().left;
         mouse.y = e.clientY - canvas.getBoundingClientRect().top;
-        console.log(mouse.x, mouse.y);
     };
 };
-
-//! TEMPORARY
-
-let temp = new Unit(100, 100, 10, 5, blue, 5, 'Rogue', .07);
-temp.draw();
-function tester() {temp.draw();};
-
 
 const draw = function() {
     if (isPlaying) {
         clearCanvas();
-        temp.draw();
-        temp.move();
+        //! temporary
+        if (rightPressed) {
+            snek.angle += snek.turn;
+        } else if (leftPressed) {
+            snek.angle -= snek.turn;
+        };
+        if (mouseControl) {
+            snek.angle += calcChaseIncrement(snek.x, snek.y, snek.angle, mouse.x, mouse.y, snek.turn);
+        };
+        snek.draw();
+        snek.move();
         requestAnimationFrame(draw);
     };
 };
 draw();
-
 
 
 /*----------- Event Listeners ----------*/
@@ -118,8 +128,12 @@ difficultyPlus.addEventListener('click', () => {
 
 canvas.addEventListener('mousemove', handleMouseMove);
 
-settingsIcon.addEventListener('click', () => isPlaying = !isPlaying);
+settingsIcon.addEventListener('click', () => {
+    isPlaying = !isPlaying
+    draw();
+});
 
-
+document.addEventListener('keydown', handleKeyDown, false);
+document.addEventListener('keyup', handleKeyUp, false);
 
 
