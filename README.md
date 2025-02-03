@@ -47,3 +47,4 @@ As a user, I want to...
 5. [game opensource audio sounds](https://gomakethings.com/how-to-play-a-sound-with-javascript/)
 6. [loading JS audio files](https://stackoverflow.com/a/58898545)
 7. [UI elements](https://uiverse.io/)
+8. [matching canvas size to dynamic grid size](https://stackoverflow.com/questions/21179779/canvas-arc75-75-50-0-3-1415-true-draws-oval-instead-of-circle)
