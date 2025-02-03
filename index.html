@@ -7,6 +7,9 @@
     <link rel="stylesheet" href="./css/style.css">
     <script defer src="./js/data.js"></script>
     <script defer src="./js/snkrx-ish.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Geo:ital@0;1&display=swap" rel="stylesheet">   
     <!-- change favicon -->
     <link rel="icon" href="data:;base64,iVBORw0KGgo=">
     <title>SNKRX-lite</title>
@@ -42,22 +45,28 @@
                 <img src="./images/icons8-mute-50.png" alt="mute icon" id="sound-off">
             </li>
             <li>
-                <p id="clickBarnsley">Barnsley</p>
+                <p>difficulty: <strong><span id="difficulty-level"></span></strong></p>
+            </li>
+            <li>
+                <img src="./images/icons8-minus-50.png" alt="lower difficulty" id="difficulty-minus">
+                <img src="./images/icons8-plus-50.png" alt="raise difficulty" id="difficulty-plus">
             </li>
         </ul>
     </nav>
-    <section class="sidebar">
-        <ul>
-            <li></li>
-            <li></li>
-            <li></li>
-            <li></li>
-            <li></li>
-        </ul>
+
+    <section class="game-area">
+        <canvas id="game-area"></canvas>
     </section>
-    <section class="game-area">c</section>
-    <section class="useless-sidebar">e</section>
-    <footer class="bottom-bar">d</footer>
+    <footer class="bottom-bar">
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+    </footer>
 
 
 </body>
