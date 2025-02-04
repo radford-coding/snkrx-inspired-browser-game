@@ -18,14 +18,17 @@ const game = {
     enemies: [],
 };
 
-const unitChoices = [];
-unitChoices.push(new Unit('Rogue'));
-unitChoices.push(new Unit('Wizard'));
-unitChoices.push(new Unit('Fighter'));
-unitChoices.push(new Unit('Curser'));
-unitChoices.push(new Unit('Spawner'));
-unitChoices.push(new Unit('Ranger'));
-unitChoices.push(new Unit('Vagrant'));
+
+
+const unitChoices = [
+    new Unit('Rogue'),
+    new Unit('Wizard'),
+    new Unit('Fighter'),
+    new Unit('Curser'),
+    new Unit('Spawner'),
+    new Unit('Ranger'),
+    new Unit('Vagrant')
+];
 
 /*---------- Variables (state) ---------*/
 
@@ -79,8 +82,10 @@ const handleKeyUp = function (e) {
         rightPressed = false;
     } else if (e.key === 'Left' || e.key === 'ArrowLeft' || e.key === 'a') {
         leftPressed = false;
-    } else if (e.key === ' ' && game.choiceMade) {
+    } else if (e.key === ' ' && game.choiceMade && !game.isPlaying) {
         handleNextArena();
+    } else if (e.key === ' ') {
+        // pause
     };
 };
 
@@ -103,12 +108,12 @@ const handleMouseMove = function(e) {
 
 
 game.snake.push(new Unit('Rogue'));
-game.snake.push(new Unit('Wizard'));
-game.snake.push(new Unit('Fighter'));
-game.snake.push(new Unit('Curser'));
-game.snake.push(new Unit('Spawner'));
-game.snake.push(new Unit('Ranger'));
-game.snake.push(new Unit('Vagrant'));
+// game.snake.push(new Unit('Wizard'));
+// game.snake.push(new Unit('Fighter'));
+// game.snake.push(new Unit('Curser'));
+// game.snake.push(new Unit('Spawner'));
+// game.snake.push(new Unit('Ranger'));
+// game.snake.push(new Unit('Vagrant'));
 
 const draw = function() {
     if (game.isPlaying) {

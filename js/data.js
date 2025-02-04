@@ -39,6 +39,7 @@ const spawnPoints = [
 const TAU = 2 * Math.PI;
 const EPSILON = 0.01;
 const unitSize = 20;
+const baseSpeed = 3;
 const bg = '#303030';
 const gray = '#4B4B4B';
 const red = '#E91E39';
@@ -150,6 +151,7 @@ const showShop = function () {
 const handleNextArena = function () {
     if (game.choiceMade && !game.isPlaying) {
         game.choices = [];
+        snek.speed = game.snake.map(u => u.speedFactor).reduce((accumulator, x) => accumulator * x, baseSpeed);
         showShopEl.checked = false;
         game.arena++;
         arenaNumEl.innerText = `arena ${game.arena}`;
@@ -214,34 +216,41 @@ class Unit {
             case 'Rogue':
                 this.color = red;
                 this.hp = 10;
+                this.speedFactor = 1.2;
                 break;
             case 'Fighter':
                 this.color = yellow;
                 this.hp = 30;
+                this.speedFactor = 0.8;
                 break;
             case 'Ranger':
                 this.color = green;
                 this.hp = 20;
+                this.speedFactor = 1.2;
                 break;
             case 'Wizard':
                 this.color = blue;
                 this.hp = 30;
+                this.speedFactor = 1;
                 break;
             case 'Curser':
                 this.color = purple;
                 this.hp = 8;
+                this.speedFactor = 0.8;
                 break;
             case 'Spawner':
                 this.color = orange;
                 this.hp = 8;
+                this.speedFactor = 0.9;
                 break;
             case 'Vagrant':
                 this.color = white;
                 this.hp = 8;
+                this.speedFactor = 1.1;
                 break;
             default:
                 this.color = bg;
-                console.log('invalid unit type'); //!
+                console.log('invalid unit type'); //! remove
         };
     };
     attack() {
@@ -266,7 +275,7 @@ class Unit {
 };
 
 class Enemy extends Pip {
-    constructor(xPos = width / 4, yPos = height / 4, size = 2 * unitSize, health = 10, fillColor = red, velo = 2, direction = 0, turningIncrement = 0.02) {
+    constructor(xPos = width / 4, yPos = height / 4, size = 2 * unitSize, health = 10, fillColor = red, velo = baseSpeed * 0.7, direction = 0, turningIncrement = 0.02) {
         super(xPos, yPos, size, health, fillColor, velo, direction, turningIncrement);
         this.jitter = 20 * this.turn;
         this.bounceable = 101;
@@ -282,7 +291,7 @@ class Enemy extends Pip {
             dx = this.speed * Math.cos(this.angle);
         } else if (game.snake.map(u => calcDist(this.x + dx, this.y + dy, u.x, u.y) < this.radius + u.radius).some(x => x === true)) { // if this enemy's movement will make it touch any unit in the snake, then...
             // return; //! freeze!
-            this.remove();
+            this.remove(); //! just move on lol
         };
         this.angle = keepWithinPiOf0(this.angle);
         this.x += dx;
@@ -317,7 +326,7 @@ class Enemy extends Pip {
 };
 
 class Snek extends Pip {
-    constructor(xPos = width / 2, yPos = height / 2, size = unitSize, health = 100000, fillColor = white, velo = 3, direction = -0.1, turningIncrement = 0.07) {
+    constructor(xPos = width / 2, yPos = height / 2, size = unitSize, health = 100000, fillColor = white, velo = baseSpeed, direction = -0.1, turningIncrement = 0.07) {
         super(xPos, yPos, size, health, fillColor, velo, direction, turningIncrement);
         this.history = [{ x: xPos, y: yPos }];
     };
@@ -353,7 +362,8 @@ class Snek extends Pip {
     };
     draw() {
         let u = 0;
-        for (let i = 0; i < this.history.length; i += Math.floor((unitSize * .75))) {
+        let spacingFactor = 0.75 * (baseSpeed / this.speed);
+        for (let i = 0; i < this.history.length; i += Math.floor((unitSize * spacingFactor))) {
             if (this.history[i] && game.snake[u]) {
                 game.snake[u].drawUnit(this.history[i].x, this.history[i].y);
                 u++;
