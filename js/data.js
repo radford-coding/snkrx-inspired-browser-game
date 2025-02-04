@@ -109,6 +109,15 @@ const showShopCurrentUnits = function() {
         shopCurrentUnitExplanations[i].style.opacity = 0.25;
         shopCurrentUnits[i].innerText = game.snake[i].level;
         shopCurrentUnitExplanations[i].innerText = game.snake[i].description;
+        nextArenaButton.style.setProperty('--nab-hover-color', difficultyColors[game.difficulty - 1]);
+    };
+};
+
+const handleNextArena = function() {
+    if(game.choiceMade) {
+        showShop.checked = false;
+        setTimeout(() => shop.classList.remove('exit-active'), 1000);
+        setTimeout(() => shop.classList.add('entry-active'), 1000);
     };
 };
 
@@ -310,7 +319,7 @@ class Snek extends Pip {
     render() {
         this.move();
         this.draw();
-        this.drawTrail();
+        // this.drawTrail();
     };
 };
 

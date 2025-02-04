@@ -9,8 +9,9 @@ const game = {
     isPlaying: true,
     audioMuted: true,
     mouseControl: false,
+    choiceMade: true,
     arena: 1,
-    wave: 3, //! change to 0 for gameplay
+    wave: 1, //! change to 0 for gameplay
     maxWave: 3,
     snake: [],
     enemies: [],
@@ -46,8 +47,8 @@ const showShop = document.getElementById('show-shop');
 
 const shopCurrentUnits = document.querySelectorAll('.current-unit');
 const shopCurrentUnitExplanations = document.querySelectorAll('.current-unit-explanation');
-
-
+const nextArenaButton = document.querySelector('.next-arena-btn');
+const shop = document.querySelector('.shop');
 
 /*-------------- Functions -------------*/
 
@@ -83,7 +84,8 @@ const handleMouseMove = function(e) {
 };
 
 
-//! add a few new units
+
+
 game.snake.push(new Unit('Rogue'));
 game.snake.push(new Unit('Wizard'));
 game.snake.push(new Unit('Swordsman'));
@@ -164,4 +166,4 @@ settingsIcon.addEventListener('click', () => {
 document.addEventListener('keydown', handleKeyDown, false);
 document.addEventListener('keyup', handleKeyUp, false);
 
-
+nextArenaButton.addEventListener('click', handleNextArena);
