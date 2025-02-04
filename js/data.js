@@ -40,6 +40,7 @@ const TAU = 2 * Math.PI;
 const EPSILON = 0.01;
 const unitSize = 20;
 const baseSpeed = 3;
+const winningArena = 5
 const bg = '#303030';
 const gray = '#4B4B4B';
 const red = '#E91E39';
@@ -97,6 +98,8 @@ const generateWave = function () {
         game.wave++;
         waveNumEl.innerText = `wave ${game.wave}/${2 + game.arena}`;
         return;
+    } else if (game.enemies.length === 0 && game.wave === 2 + game.arena && game.arena === winningArena) {
+        console.log('you win!');
     } else if (game.enemies.length === 0 && game.wave === 2 + game.arena) {
         game.isPlaying = false;
         arenaNumEl.innerText = `arena ${game.arena} cleared!`;
@@ -151,6 +154,7 @@ const showShop = function () {
 const handleNextArena = function () {
     if (game.choiceMade && !game.isPlaying) {
         game.choices = [];
+        snek.speed = baseSpeed;
         snek.speed = game.snake.map(u => u.speedFactor).reduce((accumulator, x) => accumulator * x, baseSpeed);
         showShopEl.checked = false;
         game.arena++;
@@ -164,6 +168,7 @@ const handleNextArena = function () {
     } else {
         nextArenaButton.innerHTML = 'choose first!';
     };
+    console.log(snek.speed);
 };
 
 /*--------------- Classes --------------*/

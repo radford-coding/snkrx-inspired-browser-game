@@ -83,9 +83,9 @@ const handleKeyUp = function (e) {
     } else if (e.key === 'Left' || e.key === 'ArrowLeft' || e.key === 'a') {
         leftPressed = false;
     } else if (e.key === ' ' && game.choiceMade && !game.isPlaying) {
-        handleNextArena();
+        handleNextArena(); //! sometimes causes problems?
     } else if (e.key === ' ') {
-        // pause
+        game.isPlaying = !game.isPlaying;
     };
 };
 
