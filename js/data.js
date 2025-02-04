@@ -25,6 +25,15 @@ const difficultyColors = [
     'darkred'
 ];
 
+const spawnFrac = 1/5;
+const spawnPoints = [
+    {x: width * spawnFrac, y: height * spawnFrac},
+    {x: width * (1 - spawnFrac), y: height * spawnFrac},
+    {x: width/2, y: height/2},
+    {x: width * spawnFrac, y:height * (1 - spawnFrac)},
+    {x: width * (1 - spawnFrac), y: height * (1 - spawnFrac)}
+];
+
 const TAU = 2 * Math.PI;
 const EPSILON = 0.01;
 const unitSize = 20;
@@ -72,6 +81,25 @@ const keepWithinPiOf0 = function (a) {
         };
     };
     return a;
+};
+
+const generateWave = function() {
+    if (game.enemies.length === 0 && game.wave < 2 + game.arena) {
+        let n = game.arena * 2 + game.difficulty * 2 + game.wave + Math.floor(Math.random() * 5);
+        // console.log(`${n} enemies`);
+        let spawn = spawnPoints[Math.floor(Math.random() * spawnPoints.length)];
+        for (let i = 0; i < n; i++) {
+            game.enemies.push(new Enemy(spawn.x, spawn.y));
+        };
+        game.wave++;
+        waveNum.innerText = `wave ${game.wave}/${2 + game.arena}`;
+        return;
+    } else if (game.enemies.length === 0 && game.wave === 2 + game.arena) {
+        game.isPlaying = !game.isPlaying;
+        waveNum.innerText = 'arena cleared!';
+        showShop.checked = true;
+    };
+    
 };
 
 /*--------------- Classes --------------*/
@@ -190,7 +218,8 @@ class Enemy extends Pip {
             this.angle = Math.PI - this.angle;
             dx = this.speed * Math.cos(this.angle);
         } else if (game.snake.map(u => calcDist(this.x + dx, this.y + dy, u.x, u.y) < this.radius + u.radius).some(x => x === true)) { // if this enemy's movement will make it touch any unit in the snake, then...
-            return;
+            // return; //! freeze!
+            this.remove();
         };
         this.angle = keepWithinPiOf0(this.angle);
         this.x += dx;
@@ -208,6 +237,10 @@ class Enemy extends Pip {
             };
         };
     };
+    remove() {
+        let index = game.enemies.indexOf(this);
+        game.enemies.splice(index, 1);
+    };
     render() {
         if (Math.random() >= 0.95) {
             let temp = this.angle;
@@ -215,8 +248,6 @@ class Enemy extends Pip {
         };
         this.angle += calcChaseIncrement(this.x, this.y, this.angle, snek.x, snek.y, this.turn);
         this.move();
-        // console.log(game.snake);
-        // console.log(game.snake.map(u => calcDist(this.x, this.y, u.x, u.y) < this.radius + u.radius).some(x => x === true));
         this.bounceable++;
         this.draw();
     };

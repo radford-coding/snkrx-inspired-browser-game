@@ -9,7 +9,7 @@
     <script defer src="./js/snkrx-ish.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Geo:ital@0;1&display=swap" rel="stylesheet">   
+    <link href="https://fonts.googleapis.com/css2?family=Geo:ital@0;1&display=swap" rel="stylesheet">
     <!-- change favicon -->
     <link rel="icon" href="data:;base64,iVBORw0KGgo=">
     <title>SNKRX-lite</title>
@@ -19,8 +19,8 @@
     <header class="top-bar">
         <h1>SNKRX-lite</h1>
         <div>
-            <h2 id="arena">arena 1</h2>
-            <h2 id="wave">wave 1/3</h2>
+            <h2>arena <span id="arena">1</span></h2>
+            <h2><span id="wave">1/3</span></h2>
         </div>
     </header>
     <section class="upper-right">
@@ -60,7 +60,10 @@
 
     <section class="game-area">
         <canvas id="game-area"></canvas>
+        <input type="checkbox" id="show-shop">
+        <section class="shop"></section>
     </section>
+
     <footer class="bottom-bar">
         <div></div>
         <div></div>
@@ -71,6 +74,7 @@
         <div></div>
         <div></div>
     </footer>
+
 
 
 </body>

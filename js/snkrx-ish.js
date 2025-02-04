@@ -10,7 +10,7 @@ const game = {
     audioMuted: true,
     mouseControl: false,
     arena: 1,
-    wave: 1,
+    wave: 0,
     maxWave: 3,
     snake: [],
     enemies: [],
@@ -39,6 +39,10 @@ const difficultyPlus = document.getElementById('difficulty-plus');
 const difficultyLevel = document.getElementById('difficulty-level');
 
 const gameContainer = document.querySelector('.game-area');
+
+const arenaNum = document.getElementById('arena');
+const waveNum = document.getElementById('wave');
+const showShop = document.getElementById('show-shop');
 
 
 /*-------------- Functions -------------*/
@@ -74,15 +78,6 @@ const handleMouseMove = function(e) {
     };
 };
 
-game.enemies.push(new Enemy());
-game.enemies.push(new Enemy());
-game.enemies.push(new Enemy());
-game.enemies.push(new Enemy());
-game.enemies.push(new Enemy());
-game.enemies.push(new Enemy());
-game.enemies.push(new Enemy());
-game.enemies.push(new Enemy());
-game.enemies.push(new Enemy());
 
 //! add a few new units
 game.snake.push(new Unit('Rogue'));
@@ -104,6 +99,7 @@ const draw = function() {
         if (game.mouseControl) {
             snek.angle += calcChaseIncrement(snek.x, snek.y, snek.angle, mouse.x, mouse.y, snek.turn);
         };
+        generateWave();
         for (let i = 0; i < game.enemies.length; i++) {
             let toCheck = [game.enemies.slice(i + 1), game.snake].flat();
             game.enemies[i].checkForCollisions(toCheck);
@@ -120,11 +116,11 @@ draw();
 
 [mouseIcon, keyboardIcon].forEach(b => b.addEventListener('click', (e) => {
     if (game.mouseControl) {
-        keyboardIcon.style.filter = 'invert(100%)';
+        keyboardIcon.style.filter = 'invert(80%)';
         mouseIcon.style.filter = 'invert(30%)';
         game.mouseControl = false;
     } else {
-        mouseIcon.style.filter = 'invert(100%)';
+        mouseIcon.style.filter = 'invert(80%)';
         keyboardIcon.style.filter = 'invert(30%)';
         game.mouseControl = true;
     };
@@ -132,11 +128,11 @@ draw();
 
 [audioOn, audioOff].forEach(b => b.addEventListener('click', (e) => {
     if (game.audioMuted) {
-        audioOn.style.filter = 'invert(100%)';
+        audioOn.style.filter = 'invert(80%)';
         audioOff.style.filter = 'invert(30%)';
         game.audioMuted = false;
     } else {
-        audioOff.style.filter = 'invert(100%)';
+        audioOff.style.filter = 'invert(80%)';
         audioOn.style.filter = 'invert(30%)';
         game.audioMuted = true;
     };
