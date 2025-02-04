@@ -95,11 +95,18 @@ const generateWave = function() {
         waveNum.innerText = `wave ${game.wave}/${2 + game.arena}`;
         return;
     } else if (game.enemies.length === 0 && game.wave === 2 + game.arena) {
-        game.isPlaying = !game.isPlaying;
+        game.isPlaying = false;
         waveNum.innerText = 'arena cleared!';
         showShop.checked = true;
     };
     
+};
+
+const showShopCurrentUnits = function() {
+    for (let i = 0; i < game.snake.length; i++) {
+        shopCurrentUnits[i].style.backgroundColor = game.snake[i].color;
+        shopCurrentUnits[i].innerText = game.snake[i].level;
+    };
 };
 
 /*--------------- Classes --------------*/

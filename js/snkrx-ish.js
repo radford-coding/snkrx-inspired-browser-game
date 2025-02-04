@@ -10,7 +10,7 @@ const game = {
     audioMuted: true,
     mouseControl: false,
     arena: 1,
-    wave: 0,
+    wave: 3, //! change to 0 for gameplay
     maxWave: 3,
     snake: [],
     enemies: [],
@@ -43,6 +43,8 @@ const gameContainer = document.querySelector('.game-area');
 const arenaNum = document.getElementById('arena');
 const waveNum = document.getElementById('wave');
 const showShop = document.getElementById('show-shop');
+
+const shopCurrentUnits = document.querySelectorAll('.current-unit');
 
 
 /*-------------- Functions -------------*/
@@ -107,6 +109,8 @@ const draw = function() {
         game.enemies.forEach(e => e.render());
         snek.render();
         requestAnimationFrame(draw); //! consider setInterval()
+    } else if (showShop.checked === true) {
+        showShopCurrentUnits();
     };
 };
 draw();

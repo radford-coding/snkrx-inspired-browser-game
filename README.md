@@ -49,3 +49,4 @@ As a user, I want to...
 7. [UI elements](https://uiverse.io/)
 8. [matching canvas size to dynamic grid size](https://stackoverflow.com/questions/21179779/canvas-arc75-75-50-0-3-1415-true-draws-oval-instead-of-circle)
 9. [MDN tutorial on bouncing ball simulation](https://developer.mozilla.org/en-US/docs/Learn_web_development/Extensions/Advanced_JavaScript_objects/Object_building_practice)
+9. [smooth hover descriptions](https://stackoverflow.com/questions/38567028/fade-in-out-element-on-parent-div-hover-with-css)

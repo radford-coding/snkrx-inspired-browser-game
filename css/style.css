@@ -23,13 +23,13 @@ body {
     font-style: normal;
 }
 
-/* .geo-regular {
+.geo-regular {
     font-family: "Geo", serif;
     font-weight: 400;
     font-style: normal;
 }
 
-.geo-regular-italic {
+/* .geo-regular-italic {
     font-family: "Geo", serif;
     font-weight: 400;
     font-style: italic;
@@ -151,6 +151,103 @@ nav p {
     transition: left 1s;
     background-color: rgba(0, 0, 0, 0.7);
     z-index: 1;
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: space-evenly;
+    align-items: center;
+}
+
+.unit-container {
+    width: 60vw;
+    height: 40vh;
+    display: flex;
+    flex-flow: column nowrap;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.next-arena-btn {
+    width: 10vw;
+    height: 10vh;
+    font-size: 2em;
+    border-radius: 10px;
+}
+
+.next-arena-btn:hover {
+    background-color: var(--red);
+    cursor: pointer;
+}
+
+.choice-container {
+    border: 2px solid var(--green);
+    height: 50%;
+    width: 100%;
+    border-radius: 5px;
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: space-evenly;
+    align-items: center;
+}
+
+
+/* want to fix this - 3 biggest squares that fit inside .choice-container */
+.choice {
+    background-color: var(--bg);
+    height: 90%;
+    aspect-ratio: 1;
+    border-radius: 5px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.explanation {
+    height: 95%;
+    width: 95%;
+    border-radius: 5px;
+    background-color: var(--green);
+    opacity: 0;
+    transition: opacity .5s ease-in-out;
+}
+
+.choice:hover > .explanation {
+    opacity: 1;
+}
+
+.current-explanation {
+    border: 2px solid var(--orange);
+    height: 50%;
+    width: 100%;
+}
+
+.current-container {
+    border: 2px solid var(--purple);
+    height: 40%;
+    width: 80%;
+    border-radius: 5px;
+    display: inline-block;
+}
+
+.current-units {
+    border: 2px solid var(--gray);
+    height: 50%;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+}
+
+/* todo: relative font sizing? */
+
+.current-unit {
+    width: 11%;
+    aspect-ratio: 1;
+    border-radius: 5px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 150%;
+    color: var(--gray);
 }
 
 
