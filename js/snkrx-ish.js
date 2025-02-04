@@ -104,11 +104,11 @@ const handleMouseMove = function(e) {
 
 game.snake.push(new Unit('Rogue'));
 game.snake.push(new Unit('Wizard'));
-// game.snake.push(new Unit('Fighter'));
-// game.snake.push(new Unit('Curser'));
-// game.snake.push(new Unit('Spawner'));
-// game.snake.push(new Unit('Ranger'));
-// game.snake.push(new Unit('Vagrant'));
+game.snake.push(new Unit('Fighter'));
+game.snake.push(new Unit('Curser'));
+game.snake.push(new Unit('Spawner'));
+game.snake.push(new Unit('Ranger'));
+game.snake.push(new Unit('Vagrant'));
 
 const draw = function() {
     if (game.isPlaying) {
@@ -186,11 +186,14 @@ document.addEventListener('keyup', handleKeyUp, false);
 explanationEls.forEach(c => c.addEventListener('click', (e) => {
     if (!game.choiceMade) {
         let index = Number(e.target.id.slice(-1)) - 1;
-        if (game.snake.includes(game.choices[index])) {
+        let chosenUnit = game.choices[index];
+        if (game.snake.map(u => u.name).includes(chosenUnit.name)) {
             // level up
+            game.snake.find(u => u.name === chosenUnit.name).level++;
+            choiceConfirmationEl.innerText = `${chosenUnit.name} chosen!`;
         } else {
-            game.snake.push(game.choices[index]);
-            choiceConfirmationEl.innerText = `${game.choices[index].name} chosen!`;
+            game.snake.push(chosenUnit);
+            choiceConfirmationEl.innerText = `${chosenUnit.name} chosen!`;
         };
         game.choiceMade = true;
         for (let i = 0; i < 3; i++) {
