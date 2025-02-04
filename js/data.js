@@ -101,8 +101,8 @@ const generateWave = function () {
         arenaNumEl.innerText = `arena ${game.arena} cleared!`;
         waveNumEl.innerText = '';
         showShopEl.checked = true;
-        setTimeout(() => shop.classList.remove('entry-active'), 1000);
-        setTimeout(() => shop.classList.add('exit-active'), 1000);
+        setTimeout(() => shopEl.classList.remove('entry-active'), 1000);
+        setTimeout(() => shopEl.classList.add('exit-active'), 1000);
     };
 
 };
@@ -142,12 +142,13 @@ const chooseRandomUnitUpgrades = function () {
 const showShop = function () {
     game.choiceMade = false;
     choiceConfirmationEl.innerText = 'choose an upgrade!';
+    labelCurrentUnitsEl.innerText = 'current units';
     showShopCurrentUnits();
     chooseRandomUnitUpgrades();
 };
 
 const handleNextArena = function () {
-    if (game.choiceMade) {
+    if (game.choiceMade && !game.isPlaying) {
         game.choices = [];
         showShopEl.checked = false;
         game.arena++;
@@ -156,8 +157,8 @@ const handleNextArena = function () {
         waveNumEl.innerText = `wave ${game.wave}/${2 + game.arena}`;
         game.isPlaying = true;
         draw(); //! unsure if needed
-        setTimeout(() => shop.classList.remove('exit-active'), 1000);
-        setTimeout(() => shop.classList.add('entry-active'), 1000);
+        setTimeout(() => shopEl.classList.remove('exit-active'), 1000);
+        setTimeout(() => shopEl.classList.add('entry-active'), 1000);
     } else {
         nextArenaButton.innerHTML = 'choose first!';
     };
@@ -214,7 +215,7 @@ class Unit {
                 this.color = red;
                 this.hp = 10;
                 break;
-            case 'Swordsman':
+            case 'Fighter':
                 this.color = yellow;
                 this.hp = 30;
                 break;

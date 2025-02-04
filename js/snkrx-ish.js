@@ -21,7 +21,7 @@ const game = {
 const unitChoices = [];
 unitChoices.push(new Unit('Rogue'));
 unitChoices.push(new Unit('Wizard'));
-unitChoices.push(new Unit('Swordsman'));
+unitChoices.push(new Unit('Fighter'));
 unitChoices.push(new Unit('Curser'));
 unitChoices.push(new Unit('Spawner'));
 unitChoices.push(new Unit('Ranger'));
@@ -58,10 +58,11 @@ const showShopEl = document.getElementById('show-shop');
 const shopCurrentUnits = document.querySelectorAll('.current-unit');
 const shopCurrentUnitExplanations = document.querySelectorAll('.current-unit-explanation');
 const nextArenaButton = document.querySelector('.next-arena-btn');
-const shop = document.querySelector('.shop');
+const shopEl = document.querySelector('.shop');
 const choiceEls = document.querySelectorAll('.choice');
 const explanationEls =  document.querySelectorAll('.explanation');
 const choiceConfirmationEl = document.getElementById('choice-confirmation');
+const labelCurrentUnitsEl = document.getElementById('current-units-label');
 
 /*-------------- Functions -------------*/
 
@@ -78,6 +79,8 @@ const handleKeyUp = function (e) {
         rightPressed = false;
     } else if (e.key === 'Left' || e.key === 'ArrowLeft' || e.key === 'a') {
         leftPressed = false;
+    } else if (e.key === ' ' && game.choiceMade) {
+        handleNextArena();
     };
 };
 
@@ -101,7 +104,7 @@ const handleMouseMove = function(e) {
 
 game.snake.push(new Unit('Rogue'));
 game.snake.push(new Unit('Wizard'));
-// game.snake.push(new Unit('Swordsman'));
+// game.snake.push(new Unit('Fighter'));
 // game.snake.push(new Unit('Curser'));
 // game.snake.push(new Unit('Spawner'));
 // game.snake.push(new Unit('Ranger'));
@@ -196,6 +199,7 @@ explanationEls.forEach(c => c.addEventListener('click', (e) => {
             };
         };
         nextArenaButton.innerHTML = 'next<br>arena<br>→';
+        labelCurrentUnitsEl.innerText = 'spacebar to proceed';
         showShopCurrentUnits();
     };
 }));
