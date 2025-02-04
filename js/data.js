@@ -26,7 +26,8 @@ const difficultyColors = [
 ];
 
 const TAU = 2 * Math.PI;
-const unitSize = 10;
+const EPSILON = 0.01;
+const unitSize = 20;
 const bg = '#303030';
 const gray = '#4B4B4B';
 const red = '#E91E39';
@@ -38,6 +39,10 @@ const purple = '#8E559E';
 const white = '#DADADA';
 
 /*-------------- Functions -------------*/
+
+const calcDist = function(a1, b1, a2, b2) {
+    return Math.sqrt(((a1 - a2) * (a1 - a2)) + ((b1 - b2) * (b1 - b2)));
+};
 
 const calcChaseIncrement = function (meX, meY, meAngle, targetX, targetY, inc) {
     let angBtw = Math.atan2(targetY - meY, targetX - meX);
@@ -112,6 +117,8 @@ class Unit {
     constructor(type) {
         this.level = 1;
         this.radius = unitSize;
+        this.x;
+        this.y;
         switch (type) {
             case 'Rogue':
                 this.color = red;
@@ -159,6 +166,8 @@ class Unit {
         context.fillStyle = this.color;
         context.fill();
         context.closePath();
+        this.x = x;
+        this.y = y;
     };
     attack() {
         // periodically do stuff
@@ -168,6 +177,48 @@ class Unit {
 class Enemy extends Pip {
     constructor(xPos = width / 4, yPos = height / 4, size = 2 * unitSize, health = 10, fillColor = red, velo = 2, direction = 0, turningIncrement = 0.02) {
         super(xPos, yPos, size, health, fillColor, velo, direction, turningIncrement);
+        this.jitter = 20 * this.turn;
+        this.bounceable = 101;
+    };
+    move() {
+        let dx = this.speed * Math.cos(this.angle);
+        let dy = this.speed * Math.sin(this.angle);
+        if (this.y + dy < this.radius || this.y + dy > canvas.height - this.radius) {
+            this.angle *= -1;
+            dy = this.speed * Math.sin(this.angle);
+        } else if (this.x + dx < this.radius || this.x + dx > canvas.width - this.radius) {
+            this.angle = Math.PI - this.angle;
+            dx = this.speed * Math.cos(this.angle);
+        } else if (game.snake.map(u => calcDist(this.x + dx, this.y + dy, u.x, u.y) < this.radius + u.radius).some(x => x === true)) { // if this enemy's movement will make it touch any unit in the snake, then...
+            return;
+        };
+        this.angle = keepWithinPiOf0(this.angle);
+        this.x += dx;
+        this.y += dy;
+    };
+    checkForCollisions(c = []) {
+        for (let i = 0; i < c.length; i++) {
+            let other = c[i];
+            let d = calcDist(this.x, this.y, other.x, other.y);
+            if (d < this.radius + other.radius && this.bounceable > 100) {
+                this.angle = Math.PI - this.angle;
+                this.bounceable = 0;
+                // this.x = Math.cos(d);
+                // console.log('boinggggg');
+            };
+        };
+    };
+    render() {
+        if (Math.random() >= 0.95) {
+            let temp = this.angle;
+            this.angle += (Math.random() * 2 * this.jitter) - this.jitter;
+        };
+        this.angle += calcChaseIncrement(this.x, this.y, this.angle, snek.x, snek.y, this.turn);
+        this.move();
+        // console.log(game.snake);
+        // console.log(game.snake.map(u => calcDist(this.x, this.y, u.x, u.y) < this.radius + u.radius).some(x => x === true));
+        this.bounceable++;
+        this.draw();
     };
 };
 
@@ -196,7 +247,7 @@ class Snek extends Pip {
         this.x += dx;
         this.y += dy;
         this.history.unshift({ x: this.x, y: this.y });
-        if (this.history.length > 100) {
+        if (this.history.length > unitSize * 8) {
             this.history.pop();
         };
     };
@@ -214,6 +265,11 @@ class Snek extends Pip {
                 u++;
             };
         };
+    };
+    render() {
+        this.move();
+        this.draw();
+        this.drawTrail();
     };
 };
 

@@ -13,6 +13,7 @@ const game = {
     wave: 1,
     maxWave: 3,
     snake: [],
+    enemies: [],
 };
 
 /*---------- Variables (state) ---------*/
@@ -73,7 +74,15 @@ const handleMouseMove = function(e) {
     };
 };
 
-const bad = new Enemy();
+game.enemies.push(new Enemy());
+game.enemies.push(new Enemy());
+game.enemies.push(new Enemy());
+game.enemies.push(new Enemy());
+game.enemies.push(new Enemy());
+game.enemies.push(new Enemy());
+game.enemies.push(new Enemy());
+game.enemies.push(new Enemy());
+game.enemies.push(new Enemy());
 
 //! add a few new units
 game.snake.push(new Unit('Rogue'));
@@ -87,7 +96,6 @@ game.snake.push(new Unit('Vagrant'));
 const draw = function() {
     if (game.isPlaying) {
         clearCanvas();
-        //! temporary
         if (rightPressed) {
             snek.angle += snek.turn;
         } else if (leftPressed) {
@@ -96,9 +104,12 @@ const draw = function() {
         if (game.mouseControl) {
             snek.angle += calcChaseIncrement(snek.x, snek.y, snek.angle, mouse.x, mouse.y, snek.turn);
         };
-        snek.draw(); //!
-        snek.drawTrail();
-        snek.move();
+        for (let i = 0; i < game.enemies.length; i++) {
+            let toCheck = [game.enemies.slice(i + 1), game.snake].flat();
+            game.enemies[i].checkForCollisions(toCheck);
+        };
+        game.enemies.forEach(e => e.render());
+        snek.render();
         requestAnimationFrame(draw); //! consider setInterval()
     };
 };
