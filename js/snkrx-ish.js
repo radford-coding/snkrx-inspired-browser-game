@@ -10,12 +10,22 @@ const game = {
     audioMuted: true,
     mouseControl: false,
     choiceMade: true,
+    choices: [],
     arena: 1,
-    wave: 1, //! change to 0 for gameplay
+    wave: 3, //! change to 0 for gameplay
     maxWave: 3,
     snake: [],
     enemies: [],
 };
+
+const unitChoices = [];
+unitChoices.push(new Unit('Rogue'));
+unitChoices.push(new Unit('Wizard'));
+unitChoices.push(new Unit('Swordsman'));
+unitChoices.push(new Unit('Curser'));
+unitChoices.push(new Unit('Spawner'));
+unitChoices.push(new Unit('Ranger'));
+unitChoices.push(new Unit('Vagrant'));
 
 /*---------- Variables (state) ---------*/
 
@@ -31,24 +41,27 @@ const mouseIcon = document.getElementById('mouse-icon');
 const keyboardIcon = document.getElementById('keyboard-icon');
 mouseIcon.style.filter = 'invert(30%)'; // initial
 
-const audioOn = document.getElementById('sound-on');
-const audioOff = document.getElementById('sound-off');
-audioOn.style.filter = 'invert(30%)'; //* initial state matches game.audioMuted
+const audioOnEl = document.getElementById('sound-on');
+const audioOffEl = document.getElementById('sound-off');
+audioOnEl.style.filter = 'invert(30%)'; //* initial state matches game.audioMuted
 
 const difficultyMinus = document.getElementById('difficulty-minus');
 const difficultyPlus = document.getElementById('difficulty-plus');
 const difficultyLevel = document.getElementById('difficulty-level');
 
-const gameContainer = document.querySelector('.game-area');
+const gameContainerEl = document.querySelector('.game-area');
 
-const arenaNum = document.getElementById('arena');
-const waveNum = document.getElementById('wave');
-const showShop = document.getElementById('show-shop');
+const arenaNumEl = document.getElementById('arena');
+const waveNumEl = document.getElementById('wave');
+const showShopEl = document.getElementById('show-shop');
 
 const shopCurrentUnits = document.querySelectorAll('.current-unit');
 const shopCurrentUnitExplanations = document.querySelectorAll('.current-unit-explanation');
 const nextArenaButton = document.querySelector('.next-arena-btn');
 const shop = document.querySelector('.shop');
+const choiceEls = document.querySelectorAll('.choice');
+const explanationEls =  document.querySelectorAll('.explanation');
+const choiceConfirmationEl = document.getElementById('choice-confirmation');
 
 /*-------------- Functions -------------*/
 
@@ -72,7 +85,7 @@ const showDifficulty = function() {
     game.difficulty = Math.max(1, Math.min(10, game.difficulty));
     difficultyLevel.innerText = game.difficulty;
     difficultyLevel.style.color = difficultyColors[game.difficulty - 1];
-    gameContainer.style.backgroundColor = difficultyColors[game.difficulty - 1];
+    gameContainerEl.style.backgroundColor = difficultyColors[game.difficulty - 1];
 };
 showDifficulty();
 
@@ -88,11 +101,11 @@ const handleMouseMove = function(e) {
 
 game.snake.push(new Unit('Rogue'));
 game.snake.push(new Unit('Wizard'));
-game.snake.push(new Unit('Swordsman'));
-game.snake.push(new Unit('Curser'));
-game.snake.push(new Unit('Spawner'));
-game.snake.push(new Unit('Ranger'));
-game.snake.push(new Unit('Vagrant'));
+// game.snake.push(new Unit('Swordsman'));
+// game.snake.push(new Unit('Curser'));
+// game.snake.push(new Unit('Spawner'));
+// game.snake.push(new Unit('Ranger'));
+// game.snake.push(new Unit('Vagrant'));
 
 const draw = function() {
     if (game.isPlaying) {
@@ -113,8 +126,8 @@ const draw = function() {
         game.enemies.forEach(e => e.render());
         snek.render();
         requestAnimationFrame(draw); //! consider setInterval()
-    } else if (showShop.checked === true) {
-        showShopCurrentUnits();
+    } else if (showShopEl.checked === true) {
+        showShop();
     };
 };
 draw();
@@ -134,14 +147,14 @@ draw();
     };
 }));
 
-[audioOn, audioOff].forEach(b => b.addEventListener('click', (e) => {
+[audioOnEl, audioOffEl].forEach(b => b.addEventListener('click', (e) => {
     if (game.audioMuted) {
-        audioOn.style.filter = 'invert(80%)';
-        audioOff.style.filter = 'invert(30%)';
+        audioOnEl.style.filter = 'invert(80%)';
+        audioOffEl.style.filter = 'invert(30%)';
         game.audioMuted = false;
     } else {
-        audioOff.style.filter = 'invert(80%)';
-        audioOn.style.filter = 'invert(30%)';
+        audioOffEl.style.filter = 'invert(80%)';
+        audioOnEl.style.filter = 'invert(30%)';
         game.audioMuted = true;
     };
 }));
@@ -165,5 +178,26 @@ settingsIcon.addEventListener('click', () => {
 
 document.addEventListener('keydown', handleKeyDown, false);
 document.addEventListener('keyup', handleKeyUp, false);
+
+//! pull this into its own function
+explanationEls.forEach(c => c.addEventListener('click', (e) => {
+    if (!game.choiceMade) {
+        let index = Number(e.target.id.slice(-1)) - 1;
+        if (game.snake.includes(game.choices[index])) {
+            // level up
+        } else {
+            game.snake.push(game.choices[index]);
+            choiceConfirmationEl.innerText = `${game.choices[index].name} chosen!`;
+        };
+        game.choiceMade = true;
+        for (let i = 0; i < 3; i++) {
+            if (i !== index) {
+                choiceEls[i].style.backgroundColor = 'black';
+            };
+        };
+        nextArenaButton.innerHTML = 'next<br>arena<br>→';
+        showShopCurrentUnits();
+    };
+}));
 
 nextArenaButton.addEventListener('click', handleNextArena);

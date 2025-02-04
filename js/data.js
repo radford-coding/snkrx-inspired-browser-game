@@ -25,13 +25,15 @@ const difficultyColors = [
     'darkred'
 ];
 
-const spawnFrac = 1/5;
+
+
+const spawnFrac = 1 / 5;
 const spawnPoints = [
-    {x: width * spawnFrac, y: height * spawnFrac},
-    {x: width * (1 - spawnFrac), y: height * spawnFrac},
-    {x: width/2, y: height/2},
-    {x: width * spawnFrac, y:height * (1 - spawnFrac)},
-    {x: width * (1 - spawnFrac), y: height * (1 - spawnFrac)}
+    { x: width * spawnFrac, y: height * spawnFrac },
+    { x: width * (1 - spawnFrac), y: height * spawnFrac },
+    { x: width / 2, y: height / 2 },
+    { x: width * spawnFrac, y: height * (1 - spawnFrac) },
+    { x: width * (1 - spawnFrac), y: height * (1 - spawnFrac) }
 ];
 
 const TAU = 2 * Math.PI;
@@ -49,7 +51,7 @@ const white = '#DADADA';
 
 /*-------------- Functions -------------*/
 
-const calcDist = function(a1, b1, a2, b2) {
+const calcDist = function (a1, b1, a2, b2) {
     return Math.sqrt(((a1 - a2) * (a1 - a2)) + ((b1 - b2) * (b1 - b2)));
 };
 
@@ -83,7 +85,7 @@ const keepWithinPiOf0 = function (a) {
     return a;
 };
 
-const generateWave = function() {
+const generateWave = function () {
     if (game.enemies.length === 0 && game.wave < 2 + game.arena) {
         let n = game.arena * 2 + game.difficulty * 2 + game.wave + Math.floor(Math.random() * 5);
         // console.log(`${n} enemies`);
@@ -92,17 +94,20 @@ const generateWave = function() {
             game.enemies.push(new Enemy(spawn.x, spawn.y));
         };
         game.wave++;
-        waveNum.innerText = `wave ${game.wave}/${2 + game.arena}`;
+        waveNumEl.innerText = `wave ${game.wave}/${2 + game.arena}`;
         return;
     } else if (game.enemies.length === 0 && game.wave === 2 + game.arena) {
         game.isPlaying = false;
-        waveNum.innerText = 'arena cleared!';
-        showShop.checked = true;
+        arenaNumEl.innerText = `arena ${game.arena} cleared!`;
+        waveNumEl.innerText = '';
+        showShopEl.checked = true;
+        setTimeout(() => shop.classList.remove('entry-active'), 1000);
+        setTimeout(() => shop.classList.add('exit-active'), 1000);
     };
-    
+
 };
 
-const showShopCurrentUnits = function() {
+const showShopCurrentUnits = function () {
     for (let i = 0; i < game.snake.length; i++) {
         shopCurrentUnits[i].style.backgroundColor = shopCurrentUnitExplanations[i].style.backgroundColor = game.snake[i].color;
         shopCurrentUnits[i].style.display = 'flex';
@@ -113,11 +118,48 @@ const showShopCurrentUnits = function() {
     };
 };
 
-const handleNextArena = function() {
-    if(game.choiceMade) {
-        showShop.checked = false;
+const chooseRandomUnitUpgrades = function () {
+    if (game.choices.length === 0) {
+        //! there may be a better way to choose 3 distinct random units
+        let selection = unitChoices[Math.floor(Math.random() * unitChoices.length)];
+        game.choices.push(selection);
+        while (game.choices.includes(selection)) {
+            selection = unitChoices[Math.floor(Math.random() * unitChoices.length)];
+        };
+        game.choices.push(selection);
+        while (game.choices.includes(selection)) {
+            selection = unitChoices[Math.floor(Math.random() * unitChoices.length)];
+        };
+        game.choices.push(selection);
+        for (let i = 0; i < 3; i++) {
+            choiceEls[i].style.backgroundColor = game.choices[i].color;
+            explanationEls[i].innerText = game.choices[i].name;
+        };
+    };
+
+};
+
+const showShop = function () {
+    game.choiceMade = false;
+    choiceConfirmationEl.innerText = 'choose an upgrade!';
+    showShopCurrentUnits();
+    chooseRandomUnitUpgrades();
+};
+
+const handleNextArena = function () {
+    if (game.choiceMade) {
+        game.choices = [];
+        showShopEl.checked = false;
+        game.arena++;
+        arenaNumEl.innerText = `arena ${game.arena}`;
+        game.wave = 0;
+        waveNumEl.innerText = `wave ${game.wave}/${2 + game.arena}`;
+        game.isPlaying = true;
+        draw(); //! unsure if needed
         setTimeout(() => shop.classList.remove('exit-active'), 1000);
         setTimeout(() => shop.classList.add('entry-active'), 1000);
+    } else {
+        nextArenaButton.innerHTML = 'choose first!';
     };
 };
 
@@ -166,6 +208,7 @@ class Unit {
         this.radius = unitSize;
         this.x;
         this.y;
+        this.name = type;
         switch (type) {
             case 'Rogue':
                 this.color = red;
