@@ -45,6 +45,8 @@ const waveNum = document.getElementById('wave');
 const showShop = document.getElementById('show-shop');
 
 const shopCurrentUnits = document.querySelectorAll('.current-unit');
+const shopCurrentUnitExplanations = document.querySelectorAll('.current-unit-explanation');
+
 
 
 /*-------------- Functions -------------*/

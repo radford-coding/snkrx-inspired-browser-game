@@ -104,8 +104,11 @@ const generateWave = function() {
 
 const showShopCurrentUnits = function() {
     for (let i = 0; i < game.snake.length; i++) {
-        shopCurrentUnits[i].style.backgroundColor = game.snake[i].color;
+        shopCurrentUnits[i].style.backgroundColor = shopCurrentUnitExplanations[i].style.backgroundColor = game.snake[i].color;
+        shopCurrentUnits[i].style.display = 'flex';
+        shopCurrentUnitExplanations[i].style.opacity = 0.25;
         shopCurrentUnits[i].innerText = game.snake[i].level;
+        shopCurrentUnitExplanations[i].innerText = game.snake[i].description;
     };
 };
 
