@@ -242,52 +242,85 @@ class Unit {
                 this.color = red;
                 this.hp = 10;
                 this.speedFactor = 1.23;
-                this.description = 'fast<br>ranged attack<br>low hp';
+                this.damage = 5;
+                this.projectileLifespanFactor = 0.5;
+                this.attackCooldown = baseCooldown / this.speedFactor;
+                this.projSize = baseProjSize / this.speedFactor;
+                this.projSpeed = baseProjSpeed * this.speedFactor;
+                this.description = 'fast move speed<br>ranged attack<br>low hp';
                 break;
             case 'Fighter':
                 this.color = yellow;
                 this.hp = 30;
                 this.speedFactor = 0.81;
-                this.description = 'slow<br>melee attack<br>high hp';
+                this.damage = 10;
+                this.projectileLifespanFactor = 0.1;
+                this.attackCooldown = baseCooldown / this.speedFactor;
+                this.projSize = baseProjSize / this.speedFactor;
+                this.projSpeed = baseProjSpeed * this.speedFactor;
+                this.description = 'slow move speed<br>short-range, heavy attack<br>high hp';
                 break;
             case 'Ranger':
                 this.color = green;
                 this.hp = 20;
-                this.speedFactor = 1.17;
-                this.description = 'fast<br>ranged attack<br>mid hp';
+                this.speedFactor = 1.11;
+                this.damage = 5;
+                this.projectileLifespanFactor = 1;
+                this.attackCooldown = baseCooldown / this.speedFactor;
+                this.projSize = baseProjSize / this.speedFactor;
+                this.projSpeed = baseProjSpeed * this.speedFactor;
+                this.description = 'good move speed<br>piercing ranged attack<br>mid hp';
                 break;
             case 'Wizard':
                 this.color = blue;
                 this.hp = 10;
                 this.speedFactor = 1;
-                this.description = 'mid speed<br>area attack<br>low hp';
+                this.damage = 10;
+                this.projectileLifespanFactor = 0.5;
+                this.attackCooldown = baseCooldown / this.speedFactor;
+                this.projSize = baseProjSize / this.speedFactor;
+                this.projSpeed = baseProjSpeed * this.speedFactor;
+                this.description = 'mid move speed<br>area attack<br>low hp';
                 break;
             case 'Curser':
                 this.color = purple;
                 this.hp = 8;
                 this.speedFactor = 0.8;
-                this.description = 'slow<br>landmine attack<br>low hp';
+                this.damage = 15;
+                this.projectileLifespanFactor = 0.5;
+                this.attackCooldown = baseCooldown / this.speedFactor;
+                this.projSize = baseProjSize / this.speedFactor;
+                this.projSpeed = baseProjSpeed * this.speedFactor;
+                this.description = 'slow move speed<br>landmine attack<br>low hp';
                 break;
-            case 'Spawner':
+            case 'Sprayer':
                 this.color = orange;
                 this.hp = 8;
-                this.speedFactor = 0.92;
-                this.description = 'low speed<br>spawnling attack<br>low hp';
+                this.speedFactor = 0.72;
+                this.damage = 2;
+                this.projectileLifespanFactor = 0.8;
+                this.attackCooldown = baseCooldown / this.speedFactor / 10;
+                this.projSize = baseProjSize / 2;
+                this.projSpeed = baseProjSpeed * this.speedFactor / 3;
+                this.description = 'low move speed<br>spray attack<br>low hp';
                 break;
             case 'Vagrant':
                 this.color = white;
                 this.hp = 15;
                 this.speedFactor = 1.12;
-                this.description = 'fast<br>orbital attack<br>mid hp';
+                this.damage = 5;
+                this.projectileLifespanFactor = 0.5;
+                this.attackCooldown = baseCooldown / this.speedFactor;
+                this.projSize = baseProjSize / this.speedFactor;
+                this.projSpeed = baseProjSpeed * this.speedFactor;
+                this.description = 'fast move speed<br>orbital attack<br>mid hp';
                 break;
             default:
                 this.color = bg;
                 console.log('invalid unit type'); //! remove
         };
         //! currently all fairly similar; set these inside switch/case
-        this.attackCooldown = baseCooldown / this.speedFactor;
-        this.projSpeed = baseProjSpeed * this.speedFactor;
-        this.projSize = baseProjSize / this.speedFactor;
+        this.projectileLifespan = this.projectileLifespanFactor * width / this.projSpeed;
     };
     levelUp() {
         this.level++;
@@ -302,9 +335,9 @@ class Unit {
         this.x = x;
         this.y = y;
         this.attackCounter++;
-        console.log(this.projectiles);
         this.projectiles.forEach((p) => {
-            if (p.x < 0 || p.y < 0 || p.x > width || p.y > height) {
+            p.lifespan++;
+            if (p.x < 0 || p.y < 0 || p.x > width || p.y > height || p.lifespan > this.projectileLifespan) {
                 this.projectiles.splice(this.projectiles.indexOf(p), 1);
             };
             p.x += this.projSpeed * Math.cos(p.angle);
@@ -312,7 +345,11 @@ class Unit {
             context.fillRect(p.x, p.y, this.projSize, this.projSize);
             game.enemies.forEach((e) => {
                 if (calcDist(p.x, p.y, e.x, e.y) < e.radius) {
-                    e.remove();
+                    if (this.name !== 'Ranger') {
+                        this.projectiles.splice(this.projectiles.indexOf(p), 1);
+                    };
+                    e.takeHit(this.damage);
+                    // e.remove();
                 }
             });
         });
@@ -323,7 +360,7 @@ class Unit {
     attack() {
         if (game.enemies.length > 0 && this.attackCounter > this.attackCooldown) {
             let target = game.enemies[Math.floor(Math.random() * game.enemies.length)];
-            this.projectiles.push({x: this.x, y: this.y, angle: Math.atan2(target.y - this.y, target.x - this.x)});
+            this.projectiles.push({x: this.x, y: this.y, angle: Math.atan2(target.y - this.y, target.x - this.x), lifespan: 0});
             this.attackCounter = 0;
         };
     };
@@ -369,11 +406,17 @@ class Enemy extends Pip {
             };
         };
     };
+    takeHit(dmg) {
+        this.hp -= dmg;
+    };
     remove() {
         let index = game.enemies.indexOf(this);
         game.enemies.splice(index, 1);
     };
     render() {
+        if (this.hp <= 0) {
+            this.remove();
+        };
         if (Math.random() >= 0.95) {
             let temp = this.angle;
             this.angle += (Math.random() * 2 * this.jitter) - this.jitter;

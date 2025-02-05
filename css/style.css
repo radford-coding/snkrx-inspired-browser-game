@@ -115,6 +115,7 @@ header {
     background-color: var(--gray);
     border-radius: 5px;
     grid-column: 2 / span 1;
+    height: 10vh;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -404,6 +405,7 @@ nav p {
     justify-content: center;
     align-items: center;
     margin: 10px;
+    width: min(90vw, 90vh);
     aspect-ratio: 1;
 }
 
@@ -414,11 +416,20 @@ nav p {
     border-radius: 5px;
 }
 
+#hp {
+    width: 100vw;
+    height: 10vh;
+    background-color: black;
+    color: white;
+    display: block;
+}
+
 #enemies-left {
     width: 100vw;
     text-align: center;
     color: var(--white);
     font-size: 2rem;
+    display: block;
 }
 
 /* footer {

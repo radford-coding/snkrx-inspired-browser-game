@@ -27,7 +27,7 @@ const unitChoices = [
     new Unit('Wizard'),
     new Unit('Fighter'),
     new Unit('Curser'),
-    new Unit('Spawner'),
+    new Unit('Sprayer'),
     new Unit('Ranger'),
     new Unit('Vagrant')
 ];
@@ -115,12 +115,13 @@ const handleDriving = function () {
     };
 };
 
-game.snake.push(unitChoices[Math.floor(Math.random() * unitChoices.length)]);
-// game.snake.push(new Unit('Wizard'));
+//! starting snake
+// game.snake.push(unitChoices[Math.floor(Math.random() * unitChoices.length)]);
+// game.snake.push(new Unit('Rogue'));
 // game.snake.push(new Unit('Fighter'));
 // game.snake.push(new Unit('Curser'));
-// game.snake.push(new Unit('Spawner'));
-// game.snake.push(new Unit('Ranger'));
+// game.snake.push(new Unit('Sprayer'));
+game.snake.push(new Unit('Ranger'));
 // game.snake.push(new Unit('Vagrant'));
 
 const draw = function () {
