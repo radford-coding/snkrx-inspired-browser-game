@@ -35,6 +35,7 @@ const spawnPoints = [
     { x: width * spawnFrac, y: height * (1 - spawnFrac) },
     { x: width * (1 - spawnFrac), y: height * (1 - spawnFrac) }
 ];
+const spawnDuration = 100;
 
 const TAU = 2 * Math.PI;
 const EPSILON = 0.01;
@@ -67,7 +68,7 @@ const calcChaseIncrement = function (meX, meY, meAngle, targetX, targetY, inc) {
     };
 };
 
-const bounceWall = function () {
+const bounceWallAudio = function () {
     wallBounceMP3s[wbIndex].play();
     wbIndex = (wbIndex + 1) % audioCopies;
 };
@@ -87,36 +88,36 @@ const keepWithinPiOf0 = function (a) {
     return a;
 };
 
+const canvasText = function (str, x, y) {
+    context.fillText(str, x, y);
+};
+
 const generateWave = function () {
     if (game.enemies.length === 0 && game.wave < 1 + game.arena) {
+        game.spawnCountdown = 0;
         let n = game.arena * 2 + game.difficulty * 2 + game.wave + Math.floor(Math.random() * 5);
         // console.log(`${n} enemies`);
-        let spawn = spawnPoints[Math.floor(Math.random() * spawnPoints.length)];
+        game.spawnPoint = spawnPoints[Math.floor(Math.random() * spawnPoints.length)];
+        context.fillStyle = red;
+        context.font = '48px sans-serif';
+        context.fillText('xxx', game.spawnPoint.x, game.spawnPoint.y);
         for (let i = 0; i < n; i++) {
-            game.enemies.push(new Enemy(spawn.x, spawn.y));
+            game.enemies.push(new Enemy(game.spawnPoint.x, game.spawnPoint.y));
         };
         game.wave++;
         waveNumEl.innerText = `wave ${game.wave}/${1 + game.arena}`;
         return;
     } else if (game.enemies.length === 0 && game.wave === 1 + game.arena && game.arena === winningArena) {
-        console.log('you win!');
-    } else if (game.enemies.length === 0 && game.wave === 1 + game.arena) {
-        game.isPlaying = false;
-        arenaNumEl.innerText = `arena ${game.arena} cleared!`;
-        waveNumEl.innerText = '';
-        showShopEl.checked = true;
-        setTimeout(() => shopEl.classList.remove('entry-active'), 1000);
-        setTimeout(() => shopEl.classList.add('exit-active'), 1000);
+        console.log('you win!'); //!
     };
 };
 
 const showShopCurrentUnits = function () {
     for (let i = 0; i < game.snake.length; i++) {
-        shopCurrentUnits[i].style.backgroundColor = shopCurrentUnitExplanations[i].style.backgroundColor = game.snake[i].color;
+        shopCurrentUnits[i].style.backgroundColor = shopCurrentUnitExplanations[i].style.color = game.snake[i].color;
         shopCurrentUnits[i].style.display = 'flex';
-        shopCurrentUnitExplanations[i].style.opacity = 0.25;
         shopCurrentUnits[i].innerText = game.snake[i].level;
-        shopCurrentUnitExplanations[i].innerText = game.snake[i].description;
+        shopCurrentUnitExplanations[i].innerHTML = `${game.snake[i].name}:<br>level ${game.snake[i].level}<br>${game.snake[i].description}`;
         nextArenaButton.style.setProperty('--nab-hover-color', difficultyColors[game.difficulty - 1]);
     };
 };
@@ -142,12 +143,18 @@ const chooseRandomUnitUpgrades = function () {
 
 };
 
-const recalculateSnakeSpeed = function() {
+const recalculateSnakeSpeed = function () {
     snek.speed = baseSpeed;
     snek.speed = game.snake.map(u => u.speedFactor).reduce((accumulator, x) => accumulator * x, baseSpeed);
 };
 
 const showShop = function () {
+    game.isPlaying = false;
+    arenaNumEl.innerText = `arena ${game.arena} cleared!`;
+    waveNumEl.innerText = '';
+    showShopEl.checked = true;
+    setTimeout(() => shopEl.classList.remove('entry-active'), 1000);
+    setTimeout(() => shopEl.classList.add('exit-active'), 1000);
     game.choiceMade = false; //! perhaps duplicated from handleNextArena
     choiceConfirmationEl.innerText = 'choose an upgrade!';
     labelCurrentUnitsEl.innerText = 'current units';
@@ -225,36 +232,43 @@ class Unit {
                 this.color = red;
                 this.hp = 10;
                 this.speedFactor = 1.2;
+                this.description = 'fast<br>ranged attack<br>low hp';
                 break;
             case 'Fighter':
                 this.color = yellow;
                 this.hp = 30;
                 this.speedFactor = 0.8;
+                this.description = 'slow<br>melee attack<br>high hp';
                 break;
             case 'Ranger':
                 this.color = green;
                 this.hp = 20;
                 this.speedFactor = 1.2;
+                this.description = 'fast<br>ranged attack<br>mid hp';
                 break;
             case 'Wizard':
                 this.color = blue;
-                this.hp = 30;
+                this.hp = 10;
                 this.speedFactor = 1;
+                this.description = 'mid speed<br>area attack<br>low hp';
                 break;
             case 'Curser':
                 this.color = purple;
                 this.hp = 8;
                 this.speedFactor = 0.8;
+                this.description = 'slow<br>landmine attack<br>low hp';
                 break;
             case 'Spawner':
                 this.color = orange;
                 this.hp = 8;
                 this.speedFactor = 0.9;
+                this.description = 'low speed<br>spawnling attack<br>low hp';
                 break;
             case 'Vagrant':
                 this.color = white;
-                this.hp = 8;
+                this.hp = 15;
                 this.speedFactor = 1.1;
+                this.description = 'fast<br>orbital attack<br>mid hp';
                 break;
             default:
                 this.color = bg;
@@ -268,7 +282,7 @@ class Unit {
         this.level++;
         this.hp *= 2; // double hp
     };
-    drawUnit(x, y) { //! probably need separate unit classes for each one...
+    drawUnit(x, y) {
         context.beginPath();
         context.arc(x, y, this.radius, 0, TAU, false);
         context.fillStyle = this.color;
@@ -345,13 +359,13 @@ class Snek extends Pip {
             this.angle *= -1;
             dy = this.speed * Math.sin(this.angle);
             if (!game.audioMuted) {
-                bounceWall();
+                bounceWallAudio();
             };
         } else if (this.x + dx < this.radius || this.x + dx > canvas.width - this.radius) {
             this.angle = Math.PI - this.angle;
             dx = this.speed * Math.cos(this.angle);
             if (!game.audioMuted) {
-                bounceWall();
+                bounceWallAudio();
             };
         };
         this.angle = keepWithinPiOf0(this.angle);

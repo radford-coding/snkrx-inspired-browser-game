@@ -7,12 +7,14 @@ const snek = new Snek();
 const game = {
     difficulty: 1,
     isPlaying: true,
+    spawnCountdown: 0,
+    spawnPoint: spawnPoints[0],
     audioMuted: true,
     mouseControl: false,
     choiceMade: true,
     choices: [],
     arena: 1,
-    wave: 0, //! change to 0 for gameplay to start
+    wave: 2, //! change to 0 for gameplay to start, or 2 for instant shop
     maxWave: 3,
     snake: [],
     enemies: [],
@@ -34,7 +36,7 @@ const unitChoices = [
 
 let rightPressed = false;
 let leftPressed = false;
-const mouse = {x: 100, y: 100};
+const mouse = { x: 100, y: 100 };
 
 /*----- Cached Element References  -----*/
 
@@ -61,7 +63,7 @@ const shopCurrentUnitExplanations = document.querySelectorAll('.current-unit-exp
 const nextArenaButton = document.querySelector('.next-arena-btn');
 const shopEl = document.querySelector('.shop');
 const choiceEls = document.querySelectorAll('.choice');
-const explanationEls =  document.querySelectorAll('.explanation');
+const explanationEls = document.querySelectorAll('.explanation');
 const choiceConfirmationEl = document.getElementById('choice-confirmation');
 const labelCurrentUnitsEl = document.getElementById('current-units-label');
 
@@ -85,7 +87,7 @@ const handleKeyUp = function (e) {
     };
 };
 
-const showDifficulty = function() {
+const showDifficulty = function () {
     game.difficulty = Math.max(1, Math.min(10, game.difficulty));
     difficultyLevel.innerText = game.difficulty;
     difficultyLevel.style.color = difficultyColors[game.difficulty - 1];
@@ -93,15 +95,24 @@ const showDifficulty = function() {
 };
 showDifficulty();
 
-const handleMouseMove = function(e) {
+const handleMouseMove = function (e) {
     if (game.mouseControl) {
         mouse.x = e.clientX - canvas.getBoundingClientRect().left;
         mouse.y = e.clientY - canvas.getBoundingClientRect().top;
     };
 };
 
-
-
+const handleDriving = function () {
+    if (!game.mouseControl) {
+        if (rightPressed) {
+            snek.angle += snek.turn;
+        } else if (leftPressed) {
+            snek.angle -= snek.turn;
+        };
+    } else {
+        snek.angle += calcChaseIncrement(snek.x, snek.y, snek.angle, mouse.x, mouse.y, snek.turn);
+    };
+};
 
 game.snake.push(unitChoices[Math.floor(Math.random() * unitChoices.length)]);
 // game.snake.push(new Unit('Wizard'));
@@ -111,18 +122,18 @@ game.snake.push(unitChoices[Math.floor(Math.random() * unitChoices.length)]);
 // game.snake.push(new Unit('Ranger'));
 // game.snake.push(new Unit('Vagrant'));
 
-const draw = function() {
+const draw = function () {
     if (game.isPlaying) {
         clearCanvas();
-        if (rightPressed) {
-            snek.angle += snek.turn;
-        } else if (leftPressed) {
-            snek.angle -= snek.turn;
+        handleDriving();
+        if (game.enemies.length === 0 && game.wave === 1 + game.arena) {
+            showShop();
+        } else if (game.enemies.length === 0 && game.spawnCountdown < spawnDuration) {
+            game.spawnCountdown++;
+        } else {
+            generateWave();
         };
-        if (game.mouseControl) {
-            snek.angle += calcChaseIncrement(snek.x, snek.y, snek.angle, mouse.x, mouse.y, snek.turn);
-        };
-        generateWave();
+        //! collisions
         for (let i = 0; i < game.enemies.length; i++) {
             let toCheck = [game.enemies.slice(i + 1), game.snake].flat();
             game.enemies[i].checkForCollisions(toCheck);

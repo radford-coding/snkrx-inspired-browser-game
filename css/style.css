@@ -9,15 +9,16 @@ html {
 }
 
 body {
-    --bg: #303030;
-    --gray: #4B4B4B;
-    --red: #E91E39;
-    --orange: #F06F22;
-    --yellow: #FACF00;
-    --green: #8BBF40;
-    --blue: #009BD6;
-    --purple: #8E559E;
-    --white: #DADADA;
+    --bg: rgb(48, 48, 48);
+    --gray: rgb(75, 75, 75);
+    --red: rgb(233, 30, 57);
+    --orange: rgb(240, 111, 34);
+    --yellow: rgb(250, 207, 0);
+    --green: rgb(139, 191, 64);
+    --blue: rgb(0, 155, 214);
+    --purple: rgb(142, 85, 158);
+    --white: rgb(218, 218, 218);
+    --white2: rgba(218, 218, 218, 1);
     background-color: var(--bg);
     display: grid;
     grid-template-columns: minmax(24px, 1fr) 8fr 1fr;
@@ -39,10 +40,9 @@ body {
     width: 100%;
     z-index: 2;
     background-color: var(--bg);
-    display: flex;
-    flex-flow: column nowrap;
-    align-items: center;
-    justify-content: center;
+    display: grid;
+    grid-template-rows: repeat(12, 1fr);
+    grid-template-columns: repeat(3, 1fr);
     font-size: 2rem;
     text-align: center;
     color: var(--white);
@@ -50,12 +50,37 @@ body {
     opacity: 1;
 }
 
-.welcome > * {
-    margin: 10px 30px;
+.welcome * {
+    margin: 0;
+}
+
+.welcome > h1 {
+    grid-row: 3 / span 1;
+    grid-column: 1 / span 3;
+}
+
+.welcome > h3 {
+    grid-row: 4 / span 1;
+    grid-column: 1 / span 3;
+}
+
+.welcome > h2 {
+    grid-row: 6 / span 1;
+    grid-column: 1 / span 3;
+}
+
+.welcome > p {
+    grid-row: 7 / span 1;
+    grid-column: 1 / span 3;
 }
 
 .welcome > h3 > a {
     color: var(--white);
+}
+
+.welcome > div {
+    grid-row: 9 / span 1;
+    grid-column: 2 / span 1;
 }
 
 #begin {
@@ -72,6 +97,10 @@ body {
 #begin:hover {
     background-color: var(--red);
     cursor: pointer;
+}
+
+#show-start:checked+.welcome>div>#begin {
+    display: none;
 }
 
 #show-start:checked+.welcome {
@@ -320,39 +349,43 @@ nav p {
     width: 100%;
     display: none;
     border-radius: 5px;
-    color: var(--gray);
+    font-size: 2rem;
+    flex-direction: column;
+    text-align: center;
+    justify-content: flex-end;
+    align-items: center;
 }
 
 #current-unit-1:hover~.current-unit-explanation-container>#unit-1-explanation {
-    display: block;
+    display: flex;
 }
 
 #current-unit-2:hover~.current-unit-explanation-container>#unit-2-explanation {
-    display: block;
+    display: flex;
 }
 
 #current-unit-3:hover~.current-unit-explanation-container>#unit-3-explanation {
-    display: block;
+    display: flex;
 }
 
 #current-unit-4:hover~.current-unit-explanation-container>#unit-4-explanation {
-    display: block;
+    display: flex;
 }
 
 #current-unit-5:hover~.current-unit-explanation-container>#unit-5-explanation {
-    display: block;
+    display: flex;
 }
 
 #current-unit-6:hover~.current-unit-explanation-container>#unit-6-explanation {
-    display: block;
+    display: flex;
 }
 
 #current-unit-7:hover~.current-unit-explanation-container>#unit-7-explanation {
-    display: block;
+    display: flex;
 }
 
 #current-unit-8:hover~.current-unit-explanation-container>#unit-8-explanation {
-    display: block;
+    display: flex;
 }
 
 .current-unit:hover {

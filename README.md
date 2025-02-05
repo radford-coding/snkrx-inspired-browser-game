@@ -1,4 +1,4 @@
-# Unit 1 project - SNKRX
+# Unit 1 project - SNKRX-lite
 ![snkrx icon](./images/snkrx-icon.jpeg)
 
 
@@ -6,9 +6,9 @@ A twist on the classic Snake, this **autobattler roguelike** by [a327ex](https:/
 
 The snake is made up of units with different abilities. The player's job is to steer the snake during the arenas, getting close enough to the enemy chiplets to do damage without getting close enough to collide and lose hp.
 
-After clearing each arena, a choice of unit upgrades is available. The original uses coins to buy units, but I am doing a simple pick-1-of-3 system. Collecting a new unit adds it to your snake as a lvl-1 unit. Collecting enough copies of the same unit upgrade makes that unit more powerful.
+After clearing each arena, a choice of unit upgrades is available. The original uses coins to buy units, but I am doing a simple pick-1-of-3 system. Collecting a new unit adds it to your snake as a lvl-1 unit, and choosing a unit you already have makes that unit more powerful.
 
-The enemy chiplets come in a few different flavors:
+<!-- The enemy chiplets come in a few different flavors:
 
 | color | effect |
 |:----|:---|
@@ -20,8 +20,12 @@ The enemy chiplets come in a few different flavors:
 |yellow|periodically launches allies at the snake|
 |**boss**|extra size and health, and every 10 seconds triggers a color effect from above|
 
-Each arena consists of a few waves of chiplets spawning in random locations. Waves include mostly red chiplets; on higher difficulty levels, more chiplets are of the more dangerous colors.
+Each arena consists of a few waves of chiplets spawning in random locations. Waves include mostly red chiplets; on higher difficulty levels, more chiplets are of the more dangerous colors. -->
 
+#### Technologies used
+- HTML
+- CSS
+- JS
 
 #### [Project rubric](https://pages.git.generalassemb.ly/modular-curriculum-all-courses/browser-based-game-project/project-requirements/)
 
