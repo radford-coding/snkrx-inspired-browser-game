@@ -189,6 +189,10 @@ const handleNextArena = function () {
     };
 };
 
+const showLossMessage = function() {
+    window.location.reload();
+};
+
 /*--------------- Classes --------------*/
 
 class Pip {
@@ -385,7 +389,7 @@ class Enemy extends Pip {
             this.angle = Math.PI - this.angle;
             dx = this.speed * Math.cos(this.angle);
         } else if (game.snake.map(u => calcDist(this.x + dx, this.y + dy, u.x, u.y) < this.radius + u.radius).some(x => x === true)) { // if this enemy's movement will make it touch any unit in the snake, then...
-            // return; //! freeze!
+            snek.hp -= this.hp / 2;
             this.remove(); //! just move on lol
         };
         this.angle = keepWithinPiOf0(this.angle);
@@ -429,9 +433,10 @@ class Enemy extends Pip {
 };
 
 class Snek extends Pip {
-    constructor(xPos = width / 2, yPos = height / 2, size = unitSize, health = 100000, fillColor = white, velo = baseSpeed, direction = -0.1, turningIncrement = 0.07) {
+    constructor(xPos = width / 2, yPos = height / 2, size = unitSize, health = 10, fillColor = white, velo = baseSpeed, direction = -0.1, turningIncrement = 0.07) {
         super(xPos, yPos, size, health, fillColor, velo, direction, turningIncrement);
         this.history = [{ x: xPos, y: yPos }];
+        this.maxHP = this.hp;
     };
     move() {
         let dx = this.speed * Math.cos(this.angle);
@@ -464,6 +469,10 @@ class Snek extends Pip {
         });
     };
     draw() {
+        if (this.hp <= 0) {
+            game.isPlaying = false;
+            showLossMessage();
+        };
         let u = 0;
         let spacingFactor = 0.75 * (baseSpeed / this.speed);
         for (let i = 0; i < this.history.length; i += Math.floor((unitSize * spacingFactor))) {
@@ -471,6 +480,13 @@ class Snek extends Pip {
                 game.snake[u].drawUnit(this.history[i].x, this.history[i].y);
                 game.snake[u].attack();
                 u++;
+            };
+        };
+        for (let h = 0; h < hpEls.length; h++) {
+            if (snek.hp / snek.maxHP >= h / hpEls.length) {
+                hpEls[h].style.backgroundColor = green;
+            } else {
+                hpEls[h].style.backgroundColor = red;
             };
         };
     };

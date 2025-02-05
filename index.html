@@ -19,12 +19,14 @@
     <input type="checkbox" id="show-start">
     <div class="welcome">
         <h1>welcome to SNKRX-lite!</h1>
-        <h3>a project for learning web development, modeled after <a href="https://store.steampowered.com/app/915310/SNKRX/">SNKRX</a> by a327ex.</h2>
-        <h2>rules:</h2>
-        <p>You control a snake made up of fighting units, battling through progressively harder arenas. Start with one random unit. Defeat all waves of enemies to earn an upgrade or new unit, and progress to the next arena.<br><br>Click the settings icon in the top right to pause the game, and to change how you control the snake (wasd or arrows, vs. follow mouse), audio volume, and difficulty level.</p>
-        <div>
-            <button id="begin">play<br>→</button>
-        </div>
+        <h3>a project for learning web development, inspired by a327ex's <a
+                href="https://store.steampowered.com/app/915310/SNKRX/">SNKRX</a>.</h2>
+            <h2>rules:</h2>
+            <p>You control a snake of fighting units, battling through arenas. Start with
+                one random unit, and don't let your health (bottom left) hit 0. Defeat all waves of enemies to earn an upgrade or new unit, and progress to the next arena.<br><br>Click the settings icon in the top right to pause the game, and to change how you control the snake (wasd/arrows vs. follow mouse), mute, and difficulty level.</p>
+            <div>
+                <button id="begin">play<br>→</button>
+            </div>
     </div>
     <header class="top-bar">
         <h1>SNKRX-lite</h1>
@@ -33,14 +35,14 @@
             <h2><span id="wave">wave 1/2</span></h2>
         </div>
     </header>
-    <section class="upper-right">
+    <div class="upper-right">
         <div class="spin-container">
             <label for="show-settings">
                 <img src="./images/icons8-settings-50.png" alt="settings icon" id="settings">
             </label>
 
         </div>
-    </section>
+    </div>
     <input type="checkbox" id="show-settings">
     <nav>
         <ul class="menu">
@@ -69,70 +71,75 @@
     </nav>
 
     <section class="game-area">
-        <canvas id="game-area"></canvas>
-        <input type="checkbox" id="show-shop">
-        <section class="shop entry-active">
-            <div class="unit-container">
-                <h1 id="choice-confirmation">choose an upgrade!</h1>
-                <div class="choice-container">
-                    <div class="choice" id="choice1">
-                        <div class="explanation" id="explanation1"></div>
+        <div class="game-wrapper">
+            <canvas id="game-area"></canvas>
+            <input type="checkbox" id="show-shop">
+            <section class="shop entry-active">
+                <div class="unit-container">
+                    <h1 id="choice-confirmation">choose an upgrade!</h1>
+                    <div class="choice-container">
+                        <div class="choice" id="choice1">
+                            <div class="explanation" id="explanation1"></div>
+                        </div>
+                        <div class="choice" id="choice2">
+                            <div class="explanation" id="explanation2"></div>
+                        </div>
+                        <div class="choice" id="choice3">
+                            <div class="explanation" id="explanation3"></div>
+                        </div>
                     </div>
-                    <div class="choice" id="choice2">
-                        <div class="explanation" id="explanation2"></div>
+                    <div class="current-units-container">
+                        <div class="current-unit" id="current-unit-1"></div>
+                        <div class="current-unit" id="current-unit-2"></div>
+                        <div class="current-unit" id="current-unit-3"></div>
+                        <div class="current-unit" id="current-unit-4"></div>
+                        <div class="current-unit" id="current-unit-5"></div>
+                        <div class="current-unit" id="current-unit-6"></div>
+                        <div class="current-unit" id="current-unit-7"></div>
+                        <div class="current-unit" id="current-unit-8"></div>
+                        <div class="current-unit-explanation-container">
+                            <div class="current-unit-explanation" id="unit-1-explanation">1</div>
+                            <div class="current-unit-explanation" id="unit-2-explanation">2</div>
+                            <div class="current-unit-explanation" id="unit-3-explanation">3</div>
+                            <div class="current-unit-explanation" id="unit-4-explanation">4</div>
+                            <div class="current-unit-explanation" id="unit-5-explanation">5</div>
+                            <div class="current-unit-explanation" id="unit-6-explanation">6</div>
+                            <div class="current-unit-explanation" id="unit-7-explanation">7</div>
+                            <div class="current-unit-explanation" id="unit-8-explanation">8</div>
+                        </div>
                     </div>
-                    <div class="choice" id="choice3">
-                        <div class="explanation" id="explanation3"></div>
-                    </div>
+                    <h1 id="current-units-label">current units</h1>
                 </div>
-                <div class="current-units-container">
-                    <div class="current-unit" id="current-unit-1"></div>
-                    <div class="current-unit" id="current-unit-2"></div>
-                    <div class="current-unit" id="current-unit-3"></div>
-                    <div class="current-unit" id="current-unit-4"></div>
-                    <div class="current-unit" id="current-unit-5"></div>
-                    <div class="current-unit" id="current-unit-6"></div>
-                    <div class="current-unit" id="current-unit-7"></div>
-                    <div class="current-unit" id="current-unit-8"></div>
-                    <div class="current-unit-explanation-container">
-                        <div class="current-unit-explanation" id="unit-1-explanation">1</div>
-                        <div class="current-unit-explanation" id="unit-2-explanation">2</div>
-                        <div class="current-unit-explanation" id="unit-3-explanation">3</div>
-                        <div class="current-unit-explanation" id="unit-4-explanation">4</div>
-                        <div class="current-unit-explanation" id="unit-5-explanation">5</div>
-                        <div class="current-unit-explanation" id="unit-6-explanation">6</div>
-                        <div class="current-unit-explanation" id="unit-7-explanation">7</div>
-                        <div class="current-unit-explanation" id="unit-8-explanation">8</div>
-                    </div>
-                </div>
-                <h1 id="current-units-label">current units</h1>
-            </div>
-            <button class="next-arena-btn geo-regular" type="button">next<br>arena<br>→</button>
+                <button class="next-arena-btn geo-regular" type="button">next<br>arena<br>→</button>
+            </section>
+        </div>
+    </section>
+    <div class="bottom-bar">
+        <section id="hp">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
         </section>
-    </section>
-    <section id="hp">
-        <div>1</div>
-        <div>1</div>
-        <div>1</div>
-        <div>1</div>
-        <div>1</div>
-        <div>1</div>
-        <div>1</div>
-        <div>1</div>
-        <div>1</div>
-        <div>1</div>
-        <div>1</div>
-        <div>1</div>
-        <div>1</div>
-        <div>1</div>
-        <div>1</div>
-        <div>1</div>
-        <div>1</div>
-        <div>1</div>
-        <div>1</div>
-        <div>1</div>
-    </section>
-    <section id="enemies-left"></section>
+        <section id="enemies-left"></section>
+    </div>
+
 
     <!-- <footer class="bottom-bar">
         <div id=""></div>
@@ -144,7 +151,18 @@
         <div id=""></div>
         <div id=""></div>
     </footer> -->
-
+    <div class="loss">
+        <h2>you lose...</h2>
+        <p>your snake ran out of health.</p>
+        <button id="replay-loss">play<br>again<br>→</button>
+        <button id="replay-easier">easier<br>difficulty<br>→</button>
+    </div>
+    <div class="win">
+        <h2>you win!</h2>
+        <p>well done.</p>
+        <button id="replay-win">play<br>again<br>→</button>
+        <button id="replay-harder">harder<br>difficulty<br>→</button>
+    </div>
 
 
 </body>

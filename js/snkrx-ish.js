@@ -53,11 +53,13 @@ const difficultyMinus = document.getElementById('difficulty-minus');
 const difficultyPlus = document.getElementById('difficulty-plus');
 const difficultyLevel = document.getElementById('difficulty-level');
 
-const gameContainerEl = document.querySelector('.game-area');
+const gameContainerEl = document.querySelector('.game-wrapper');
 const arenaNumEl = document.getElementById('arena');
 const waveNumEl = document.getElementById('wave');
 const enemiesLeftEl = document.getElementById('enemies-left');
 const showShopEl = document.getElementById('show-shop');
+const hpEls = document.querySelectorAll('#hp > div');
+const hpCounter = hpEls.length;
 
 const shopCurrentUnits = document.querySelectorAll('.current-unit');
 const shopCurrentUnitExplanations = document.querySelectorAll('.current-unit-explanation');
@@ -67,6 +69,8 @@ const choiceEls = document.querySelectorAll('.choice');
 const explanationEls = document.querySelectorAll('.explanation');
 const choiceConfirmationEl = document.getElementById('choice-confirmation');
 const labelCurrentUnitsEl = document.getElementById('current-units-label');
+const lossEl = document.querySelector('.loss');
+const winEl = document.querySelector('.win');
 
 /*-------------- Functions -------------*/
 
@@ -116,12 +120,12 @@ const handleDriving = function () {
 };
 
 //! starting snake
-// game.snake.push(unitChoices[Math.floor(Math.random() * unitChoices.length)]);
+game.snake.push(unitChoices[Math.floor(Math.random() * unitChoices.length)]);
 // game.snake.push(new Unit('Rogue'));
 // game.snake.push(new Unit('Fighter'));
 // game.snake.push(new Unit('Curser'));
 // game.snake.push(new Unit('Sprayer'));
-game.snake.push(new Unit('Ranger'));
+// game.snake.push(new Unit('Ranger'));
 // game.snake.push(new Unit('Vagrant'));
 
 const draw = function () {
@@ -215,9 +219,13 @@ explanationEls.forEach(c => c.addEventListener('click', (e) => {
         if (game.snake.map(u => u.name).includes(chosenUnit.name)) {
             // level up
             game.snake.find(u => u.name === chosenUnit.name).level++;
+            snek.maxHP += chosenUnit.hp;
+            snek.hp = snek.maxHP;
             choiceConfirmationEl.innerText = `${chosenUnit.name} chosen!`;
         } else {
             game.snake.push(chosenUnit);
+            snek.maxHP += chosenUnit.hp;
+            snek.hp = snek.maxHP;
             choiceConfirmationEl.innerText = `${chosenUnit.name} chosen!`;
         };
         game.choiceMade = true;
