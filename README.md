@@ -23,20 +23,11 @@ The enemy chiplets come in a few different flavors:
 Each arena consists of a few waves of chiplets spawning in random locations. Waves include mostly red chiplets; on higher difficulty levels, more chiplets are of the more dangerous colors.
 
 
-
-#### user stories
-
-As a user, I want to...
-- see a landing page, to choose difficulty, control settings, and an initial unit
-- control the snake's movement, either with mouse or keyboard
-- clearly see the state of the snake - units, health, level, difficulty
-- visual feedback for choices, and clear display when moving between arenas
-- win/loss messages, with replay option - perhaps with added difficulty
-- be able to see the rules of the game, via the sidebar, with win/loss conditions
-
 #### [Project rubric](https://pages.git.generalassemb.ly/modular-curriculum-all-courses/browser-based-game-project/project-requirements/)
 
-#### Sources:
+#### [Deployed project](https://radford-coding.github.io/snkrx-inspired-browser-game/)
+
+#### Sources I found helpful for understanding:
 
 1. [atan2](https://en.wikipedia.org/wiki/Atan2) - figuring out how to get objects to chase each other was hard for me
 2. [MDN canvas tutorial](https://developer.mozilla.org/en-US/docs/Games/Tutorials/2D_Breakout_game_pure_JavaScript) - amazing for my understanding of basic 2D rendering with `<canvas>`

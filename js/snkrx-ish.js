@@ -12,7 +12,7 @@ const game = {
     choiceMade: true,
     choices: [],
     arena: 1,
-    wave: 3, //! change to 0 for gameplay
+    wave: 0, //! change to 0 for gameplay to start
     maxWave: 3,
     snake: [],
     enemies: [],
@@ -38,22 +38,20 @@ const mouse = {x: 100, y: 100};
 
 /*----- Cached Element References  -----*/
 
-const settingsIcon = document.getElementById('settings');
+const playBtn = document.getElementById('begin');
 
+const settingsIcon = document.getElementById('settings');
 const mouseIcon = document.getElementById('mouse-icon');
 const keyboardIcon = document.getElementById('keyboard-icon');
 mouseIcon.style.filter = 'invert(30%)'; // initial
-
 const audioOnEl = document.getElementById('sound-on');
 const audioOffEl = document.getElementById('sound-off');
 audioOnEl.style.filter = 'invert(30%)'; //* initial state matches game.audioMuted
-
 const difficultyMinus = document.getElementById('difficulty-minus');
 const difficultyPlus = document.getElementById('difficulty-plus');
 const difficultyLevel = document.getElementById('difficulty-level');
 
 const gameContainerEl = document.querySelector('.game-area');
-
 const arenaNumEl = document.getElementById('arena');
 const waveNumEl = document.getElementById('wave');
 const showShopEl = document.getElementById('show-shop');
@@ -84,8 +82,6 @@ const handleKeyUp = function (e) {
         leftPressed = false;
     } else if (e.key === ' ' && game.choiceMade && !game.isPlaying) {
         handleNextArena(); //! sometimes causes problems?
-    } else if (e.key === ' ') {
-        game.isPlaying = !game.isPlaying;
     };
 };
 
@@ -107,7 +103,7 @@ const handleMouseMove = function(e) {
 
 
 
-game.snake.push(new Unit('Rogue'));
+game.snake.push(unitChoices[Math.floor(Math.random() * unitChoices.length)]);
 // game.snake.push(new Unit('Wizard'));
 // game.snake.push(new Unit('Fighter'));
 // game.snake.push(new Unit('Curser'));
@@ -138,10 +134,17 @@ const draw = function() {
         showShop();
     };
 };
-draw();
 
 
 /*----------- Event Listeners ----------*/
+
+document.getElementById('begin').addEventListener('click', () => {
+    document.getElementById('show-start').checked = true;
+    setTimeout(() => {
+        document.querySelector('.welcome').style.display = 'none';
+    }, 1000);
+    setTimeout(draw, 1000);
+});
 
 [mouseIcon, keyboardIcon].forEach(b => b.addEventListener('click', (e) => {
     if (game.mouseControl) {

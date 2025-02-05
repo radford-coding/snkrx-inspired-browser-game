@@ -88,7 +88,7 @@ const keepWithinPiOf0 = function (a) {
 };
 
 const generateWave = function () {
-    if (game.enemies.length === 0 && game.wave < 2 + game.arena) {
+    if (game.enemies.length === 0 && game.wave < 1 + game.arena) {
         let n = game.arena * 2 + game.difficulty * 2 + game.wave + Math.floor(Math.random() * 5);
         // console.log(`${n} enemies`);
         let spawn = spawnPoints[Math.floor(Math.random() * spawnPoints.length)];
@@ -96,11 +96,11 @@ const generateWave = function () {
             game.enemies.push(new Enemy(spawn.x, spawn.y));
         };
         game.wave++;
-        waveNumEl.innerText = `wave ${game.wave}/${2 + game.arena}`;
+        waveNumEl.innerText = `wave ${game.wave}/${1 + game.arena}`;
         return;
-    } else if (game.enemies.length === 0 && game.wave === 2 + game.arena && game.arena === winningArena) {
+    } else if (game.enemies.length === 0 && game.wave === 1 + game.arena && game.arena === winningArena) {
         console.log('you win!');
-    } else if (game.enemies.length === 0 && game.wave === 2 + game.arena) {
+    } else if (game.enemies.length === 0 && game.wave === 1 + game.arena) {
         game.isPlaying = false;
         arenaNumEl.innerText = `arena ${game.arena} cleared!`;
         waveNumEl.innerText = '';
@@ -108,7 +108,6 @@ const generateWave = function () {
         setTimeout(() => shopEl.classList.remove('entry-active'), 1000);
         setTimeout(() => shopEl.classList.add('exit-active'), 1000);
     };
-
 };
 
 const showShopCurrentUnits = function () {
@@ -143,8 +142,13 @@ const chooseRandomUnitUpgrades = function () {
 
 };
 
+const recalculateSnakeSpeed = function() {
+    snek.speed = baseSpeed;
+    snek.speed = game.snake.map(u => u.speedFactor).reduce((accumulator, x) => accumulator * x, baseSpeed);
+};
+
 const showShop = function () {
-    game.choiceMade = false;
+    game.choiceMade = false; //! perhaps duplicated from handleNextArena
     choiceConfirmationEl.innerText = 'choose an upgrade!';
     labelCurrentUnitsEl.innerText = 'current units';
     showShopCurrentUnits();
@@ -154,21 +158,20 @@ const showShop = function () {
 const handleNextArena = function () {
     if (game.choiceMade && !game.isPlaying) {
         game.choices = [];
-        snek.speed = baseSpeed;
-        snek.speed = game.snake.map(u => u.speedFactor).reduce((accumulator, x) => accumulator * x, baseSpeed);
+        recalculateSnakeSpeed();
         showShopEl.checked = false;
         game.arena++;
         arenaNumEl.innerText = `arena ${game.arena}`;
         game.wave = 0;
-        waveNumEl.innerText = `wave ${game.wave}/${2 + game.arena}`;
+        waveNumEl.innerText = `wave ${game.wave}/${1 + game.arena}`;
         game.isPlaying = true;
+        game.choiceMade = false;
         draw(); //! unsure if needed
         setTimeout(() => shopEl.classList.remove('exit-active'), 1000);
         setTimeout(() => shopEl.classList.add('entry-active'), 1000);
     } else {
-        nextArenaButton.innerHTML = 'choose first!';
+        nextArenaButton.innerHTML = 'choose first';
     };
-    console.log(snek.speed);
 };
 
 /*--------------- Classes --------------*/
