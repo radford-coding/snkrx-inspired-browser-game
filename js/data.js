@@ -41,6 +41,7 @@ const TAU = 2 * Math.PI;
 const EPSILON = 0.01;
 const unitSize = 20;
 const baseSpeed = 3;
+const baseCooldown = 100;
 const winningArena = 5
 const bg = '#303030';
 const gray = '#4B4B4B';
@@ -92,20 +93,25 @@ const canvasText = function (str, x, y) {
     context.fillText(str, x, y);
 };
 
+const showSpawnLocation = function() {
+    context.fillStyle = red;
+    // context.fillRect(game.spawnPoint.x, game.spawnPoint.y, 10, 10);
+    context.font = `bold ${width / 10}px sans-serif`;
+    context.fillText('X', game.spawnPoint.x, game.spawnPoint.y);
+
+};
+
 const generateWave = function () {
     if (game.enemies.length === 0 && game.wave < 1 + game.arena) {
         game.spawnCountdown = 0;
         let n = game.arena * 2 + game.difficulty * 2 + game.wave + Math.floor(Math.random() * 5);
         // console.log(`${n} enemies`);
-        game.spawnPoint = spawnPoints[Math.floor(Math.random() * spawnPoints.length)];
-        context.fillStyle = red;
-        context.font = '48px sans-serif';
-        context.fillText('xxx', game.spawnPoint.x, game.spawnPoint.y);
         for (let i = 0; i < n; i++) {
             game.enemies.push(new Enemy(game.spawnPoint.x, game.spawnPoint.y));
         };
-        game.wave++;
+        game.wave += 1;
         waveNumEl.innerText = `wave ${game.wave}/${1 + game.arena}`;
+        game.spawnPoint = spawnPoints[Math.floor(Math.random() * spawnPoints.length)];
         return;
     } else if (game.enemies.length === 0 && game.wave === 1 + game.arena && game.arena === winningArena) {
         console.log('you win!'); //!
@@ -137,7 +143,7 @@ const chooseRandomUnitUpgrades = function () {
         game.choices.push(selection);
         for (let i = 0; i < 3; i++) {
             choiceEls[i].style.backgroundColor = game.choices[i].color;
-            explanationEls[i].innerText = game.choices[i].name;
+            explanationEls[i].innerHTML = `${game.choices[i].name}<br>${game.choices[i].description}`;
         };
     };
 
@@ -227,6 +233,8 @@ class Unit {
         this.x;
         this.y;
         this.name = type;
+        this.attackCounter = 0;
+        this.projectiles = [];
         switch (type) {
             case 'Rogue':
                 this.color = red;
@@ -274,9 +282,7 @@ class Unit {
                 this.color = bg;
                 console.log('invalid unit type'); //! remove
         };
-    };
-    attack() {
-        //based on level
+        this.attackCooldown = baseCooldown / this.speedFactor;
     };
     levelUp() {
         this.level++;
@@ -290,9 +296,13 @@ class Unit {
         context.closePath();
         this.x = x;
         this.y = y;
+        this.attackCounter++;
     };
     attack() {
-        // periodically do stuff
+        if (this.attackCounter > this.attackCooldown) {
+            console.log(`${this.name} shoots!`);
+            this.attackCounter = 0;
+        };
     };
 };
 
@@ -303,6 +313,9 @@ class Enemy extends Pip {
         this.bounceable = 101;
     };
     move() {
+        if (Math.random() > 0.95) {
+            this.angle += (2 * Math.random() * this.jitter) - this.jitter;
+        };
         let dx = this.speed * Math.cos(this.angle);
         let dy = this.speed * Math.sin(this.angle);
         if (this.y + dy < this.radius || this.y + dy > canvas.height - this.radius) {
@@ -324,10 +337,12 @@ class Enemy extends Pip {
             let other = c[i];
             let d = calcDist(this.x, this.y, other.x, other.y);
             if (d < this.radius + other.radius && this.bounceable > 100) {
+                // let r1 = Math.random() < 0.5 ? 1 : -1;
+                // let r2 = Math.random() < 0.5 ? 1 : -1;
+                // this.x += r1 * this.speed * 3;
+                // this.y += r2 * this.speed * 3;
                 this.angle = Math.PI - this.angle;
                 this.bounceable = 0;
-                // this.x = Math.cos(d);
-                // console.log('boinggggg');
             };
         };
     };
@@ -388,6 +403,7 @@ class Snek extends Pip {
         for (let i = 0; i < this.history.length; i += Math.floor((unitSize * spacingFactor))) {
             if (this.history[i] && game.snake[u]) {
                 game.snake[u].drawUnit(this.history[i].x, this.history[i].y);
+                game.snake[u].attack();
                 u++;
             };
         };

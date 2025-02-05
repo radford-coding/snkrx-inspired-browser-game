@@ -14,7 +14,7 @@ const game = {
     choiceMade: true,
     choices: [],
     arena: 1,
-    wave: 2, //! change to 0 for gameplay to start, or 2 for instant shop
+    wave: 0, //! change to 0 for gameplay to start, or 2 for instant shop
     maxWave: 3,
     snake: [],
     enemies: [],
@@ -56,6 +56,7 @@ const difficultyLevel = document.getElementById('difficulty-level');
 const gameContainerEl = document.querySelector('.game-area');
 const arenaNumEl = document.getElementById('arena');
 const waveNumEl = document.getElementById('wave');
+const enemiesLeftEl = document.getElementById('enemies-left');
 const showShopEl = document.getElementById('show-shop');
 
 const shopCurrentUnits = document.querySelectorAll('.current-unit');
@@ -129,6 +130,9 @@ const draw = function () {
         if (game.enemies.length === 0 && game.wave === 1 + game.arena) {
             showShop();
         } else if (game.enemies.length === 0 && game.spawnCountdown < spawnDuration) {
+            if (game.spawnCountdown % (spawnDuration / 2) < (spawnDuration / 4)) {
+                showSpawnLocation();
+            };
             game.spawnCountdown++;
         } else {
             generateWave();
@@ -138,6 +142,7 @@ const draw = function () {
             let toCheck = [game.enemies.slice(i + 1), game.snake].flat();
             game.enemies[i].checkForCollisions(toCheck);
         };
+        enemiesLeftEl.innerText = `enemies remaining: ${game.enemies.length}`;
         game.enemies.forEach(e => e.render());
         snek.render();
         requestAnimationFrame(draw); //! consider setInterval()

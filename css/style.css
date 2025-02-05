@@ -232,7 +232,7 @@ nav p {
     overflow: hidden;
     padding: 48px 10px;
     transition: all 1s ease-in;
-    background-color: rgba(0, 0, 0, 0.7);
+    background-color: rgba(0, 0, 0, 0.85);
     z-index: 1;
     display: flex;
     flex-flow: row nowrap;
@@ -303,6 +303,7 @@ nav p {
     display: flex;
     justify-content: center;
     align-items: center;
+    text-align: center;
 }
 
 .choice:hover>.explanation {
@@ -413,8 +414,14 @@ nav p {
     border-radius: 5px;
 }
 
+#enemies-left {
+    width: 100vw;
+    text-align: center;
+    color: var(--white);
+    font-size: 2rem;
+}
 
-footer {
+/* footer {
     height: 8vw;
     background-color: var(--gray);
     border-radius: 5px;
@@ -427,4 +434,4 @@ footer>div {
     border-radius: 5px;
     margin: 0.5vw;
     background-color: var(--bg);
-}
+} */
