@@ -42,6 +42,8 @@ const EPSILON = 0.01;
 const unitSize = 20;
 const baseSpeed = 3;
 const baseCooldown = 100;
+const baseProjSpeed = 7;
+const baseProjSize = 7;
 const winningArena = 5
 const bg = '#303030';
 const gray = '#4B4B4B';
@@ -239,19 +241,19 @@ class Unit {
             case 'Rogue':
                 this.color = red;
                 this.hp = 10;
-                this.speedFactor = 1.2;
+                this.speedFactor = 1.23;
                 this.description = 'fast<br>ranged attack<br>low hp';
                 break;
             case 'Fighter':
                 this.color = yellow;
                 this.hp = 30;
-                this.speedFactor = 0.8;
+                this.speedFactor = 0.81;
                 this.description = 'slow<br>melee attack<br>high hp';
                 break;
             case 'Ranger':
                 this.color = green;
                 this.hp = 20;
-                this.speedFactor = 1.2;
+                this.speedFactor = 1.17;
                 this.description = 'fast<br>ranged attack<br>mid hp';
                 break;
             case 'Wizard':
@@ -269,20 +271,23 @@ class Unit {
             case 'Spawner':
                 this.color = orange;
                 this.hp = 8;
-                this.speedFactor = 0.9;
+                this.speedFactor = 0.92;
                 this.description = 'low speed<br>spawnling attack<br>low hp';
                 break;
             case 'Vagrant':
                 this.color = white;
                 this.hp = 15;
-                this.speedFactor = 1.1;
+                this.speedFactor = 1.12;
                 this.description = 'fast<br>orbital attack<br>mid hp';
                 break;
             default:
                 this.color = bg;
                 console.log('invalid unit type'); //! remove
         };
+        //! currently all fairly similar; set these inside switch/case
         this.attackCooldown = baseCooldown / this.speedFactor;
+        this.projSpeed = baseProjSpeed * this.speedFactor;
+        this.projSize = baseProjSize / this.speedFactor;
     };
     levelUp() {
         this.level++;
@@ -297,10 +302,28 @@ class Unit {
         this.x = x;
         this.y = y;
         this.attackCounter++;
+        console.log(this.projectiles);
+        this.projectiles.forEach((p) => {
+            if (p.x < 0 || p.y < 0 || p.x > width || p.y > height) {
+                this.projectiles.splice(this.projectiles.indexOf(p), 1);
+            };
+            p.x += this.projSpeed * Math.cos(p.angle);
+            p.y += this.projSpeed * Math.sin(p.angle);
+            context.fillRect(p.x, p.y, this.projSize, this.projSize);
+            game.enemies.forEach((e) => {
+                if (calcDist(p.x, p.y, e.x, e.y) < e.radius) {
+                    e.remove();
+                }
+            });
+        });
+    };
+    handleHit() {
+
     };
     attack() {
-        if (this.attackCounter > this.attackCooldown) {
-            console.log(`${this.name} shoots!`);
+        if (game.enemies.length > 0 && this.attackCounter > this.attackCooldown) {
+            let target = game.enemies[Math.floor(Math.random() * game.enemies.length)];
+            this.projectiles.push({x: this.x, y: this.y, angle: Math.atan2(target.y - this.y, target.x - this.x)});
             this.attackCounter = 0;
         };
     };
