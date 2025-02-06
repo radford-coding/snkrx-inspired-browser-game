@@ -10,7 +10,7 @@ const game = {
     spawnCountdown: 0,
     spawnPoint: spawnPoints[0],
     audioMuted: true,
-    mouseControl: false,
+    mouseControl: true,
     choiceMade: true,
     choices: [],
     arena: 1,
@@ -45,7 +45,7 @@ const playBtn = document.getElementById('begin');
 const settingsIcon = document.getElementById('settings');
 const mouseIcon = document.getElementById('mouse-icon');
 const keyboardIcon = document.getElementById('keyboard-icon');
-mouseIcon.style.filter = 'invert(30%)';
+keyboardIcon.style.filter = 'invert(30%)';
 const audioOnEl = document.getElementById('sound-on');
 const audioOffEl = document.getElementById('sound-off');
 audioOnEl.style.filter = 'invert(30%)';
@@ -182,20 +182,33 @@ lossButtonReplay.addEventListener('click', (e) => {
         lossEl.style.display = 'none';
     }, 1000);
     setTimeout(draw, 1000);
-    // replay, hide loss screen
 });
 
 winButtonReplay.addEventListener('click', (e) => {
-    // replay, hide win screen
+    showWinEl.checked = true;
+    resetGame(game.difficulty);
+    setTimeout(() => {
+        winEl.style.display = 'none';
+    }, 1000);
+    setTimeout(draw, 1000);
 });
 
 lossButtonReplayEasier.addEventListener('click', (e) => {
-    // replay with lower difficulty, hdie loss screen
+    showLossEl.checked = true;
+    resetGame(game.difficulty - 1);
+    setTimeout(() => {
+        lossEl.style.display = 'none';
+    }, 1000);
+    setTimeout(draw, 1000);
 });
 
 winButtonReplayHarder.addEventListener('click', (e) => {
-
-    // replay with higher difficulty, hide win screen
+    showWinEl.checked = true;
+    resetGame(game.difficulty + 1);
+    setTimeout(() => {
+        winEl.style.display = 'none';
+    }, 1000);
+    setTimeout(draw, 1000);
 });
 
 [mouseIcon, keyboardIcon].forEach(b => b.addEventListener('click', (e) => {

@@ -21,8 +21,8 @@ body {
     --white2: rgba(218, 218, 218, 1);
     background-color: var(--bg);
     display: grid;
-    grid-template-columns: 90vw 10vw;
-    grid-template-rows: 10vh 80vh 10vh;
+    grid-template-columns: 81vw 9vw;
+    grid-template-rows: 9vh 72vh 9vh;
     font-family: "Geo", serif;
     font-weight: 400;
     font-style: normal;
