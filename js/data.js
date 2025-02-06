@@ -154,7 +154,7 @@ const showSpawnLocation = function () {
 };
 
 const spawnNormalWave = function () {
-    console.log(game.enemies.length, game.wave, game.arena);
+    // console.log(game.enemies.length, game.wave, game.arena);
     game.spawnCountdown = 0;
     let n = game.arena * 2 + game.difficulty * 2 + game.wave + Math.floor(Math.random() * 5);
     // console.log(`${n} enemies`);
@@ -167,11 +167,8 @@ const spawnNormalWave = function () {
 };
 
 const generateWave = function () {
-    if (game.enemies.length === 0 && game.wave === game.arena && game.arena === winningArena) {
-        console.log('you win');
-        showWinMessage();
-        game.isPlaying = false;
-    } else if (game.enemies.length === 0 && game.wave <= game.arena) {
+    console.log(`wave ${game.wave}/${game.arena + 1}`);
+    if (game.enemies.length === 0 && game.wave <= game.arena) {
         spawnNormalWave();
     };
 };

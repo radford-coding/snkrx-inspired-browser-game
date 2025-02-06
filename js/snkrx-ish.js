@@ -140,7 +140,12 @@ const draw = function () {
     if (game.isPlaying) {
         clearCanvas();
         handleDriving();
-        if (game.enemies.length === 0 && game.wave === 1 + game.arena) {
+        if (game.enemies.length === 0 && game.arena === winningArena && game.wave === 1 + game.arena) {
+            // win
+            console.log('you win');
+            showWinMessage();
+            game.isPlaying = false;
+        } else if (game.enemies.length === 0 && game.wave === 1 + game.arena && game.arena < winningArena) {
             console.log(`wave ${game.wave}/${game.arena}`);
             showShop();
         } else if (game.enemies.length === 0 && game.spawnCountdown < spawnDuration) {
@@ -148,7 +153,7 @@ const draw = function () {
                 showSpawnLocation();
             };
             game.spawnCountdown++;
-        } else {
+        } else if (game.enemies.length === 0 && game.spawnCountdown >= spawnDuration) {
             generateWave();
         };
         //! collisions
