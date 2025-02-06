@@ -28,6 +28,7 @@ let audio = {
 const deployedAudioPath = 'https://github.com/radford-coding/snkrx-inspired-browser-game/blob/main/audio/';
 
 const lossAudio = new Audio(deployedAudioPath + 'loss.mp3' + '?raw=true');
+const winAudio = new Audio(deployedAudioPath + 'win.mp3' + '?raw=true');
 const startAudio = new Audio(deployedAudioPath + 'start.mp3' + '?raw=true');
 const upgradeAudio = new Audio(deployedAudioPath + 'upgrade.mp3' + '?raw=true');
 
@@ -84,6 +85,7 @@ let baseCooldown = 100;
 let currentCooldown = 100;
 const baseProjSpeed = 7; // make relative to canvas width
 const baseProjSize = 7; // make relative to canvas width
+const bounceableDelay = 75;
 const winningArena = 2;
 const bg = '#303030';
 const gray = '#4B4B4B';
@@ -147,17 +149,14 @@ const canvasText = function (str, x, y) {
 
 const showSpawnLocation = function () {
     context.fillStyle = red;
-    // context.fillRect(game.spawnPoint.x, game.spawnPoint.y, 10, 10);
     context.font = `bold ${width / 10}px sans-serif`;
     context.fillText('X', game.spawnPoint.x, game.spawnPoint.y);
 
 };
 
 const spawnNormalWave = function () {
-    // console.log(game.enemies.length, game.wave, game.arena);
     game.spawnCountdown = 0;
     let n = game.arena * 2 + game.difficulty * 2 + game.wave + Math.floor(Math.random() * 5);
-    // console.log(`${n} enemies`);
     for (let i = 0; i < n; i++) {
         game.enemies.push(new Enemy(game.spawnPoint.x, game.spawnPoint.y));
     };
@@ -167,7 +166,6 @@ const spawnNormalWave = function () {
 };
 
 const generateWave = function () {
-    console.log(`wave ${game.wave}/${game.arena + 1}`);
     if (game.enemies.length === 0 && game.wave <= game.arena) {
         spawnNormalWave();
     };
@@ -236,7 +234,10 @@ const handleNextArena = function () {
         game.isPlaying = true;
         game.choiceMade = false;
         startAudio.play();
-        draw(); //! unsure if needed
+        game.snake.forEach((u) => {
+            u.projectiles = [];
+        });
+        draw();
         setTimeout(() => shopEl.classList.remove('exit-active'), 1000);
         setTimeout(() => shopEl.classList.add('entry-active'), 1000);
     } else {
@@ -252,7 +253,7 @@ const showLossMessage = function () {
 };
 
 const showWinMessage = function () {
-    // play winning audio
+    winAudio.play();
     game.isPlaying = false;
     winEl.style.display = 'grid';
     showWinEl.checked = false;
@@ -326,8 +327,8 @@ class Unit {
     constructor(type) {
         this.level = 1;
         this.radius = unitSize;
-        this.x;
-        this.y;
+        this.x = width/2;
+        this.y = height/2;
         this.name = type;
         this.attackCounter = 0;
         this.projectiles = [];
@@ -372,7 +373,6 @@ class Unit {
                 this.color = blue;
                 this.hp = 10;
                 this.speedFactor = 0.9;
-                // baseCooldown *= 0.85;
                 this.description = 'no attack<br>buffs allies\' attack speed<br>low hp';
                 break;
             case 'Trapper':
@@ -415,10 +415,6 @@ class Unit {
                 break;
         };
     };
-    levelUp() {
-        this.level++;
-        this.hp *= 2; // double hp
-    };
     calcAttackSpeed() {
         if (this.name !== 'Sprayer') {
             this.attackCooldown = currentCooldown / this.speedFactor;
@@ -438,7 +434,7 @@ class Unit {
         // this.drawProjectiles();
     };
     drawProjectiles() {
-        if (this.name !== 'Enchanter') {
+        if (this.name !== 'Enchanter' && this.name !== 'Vagrant') {
             this.projectiles.forEach((p) => {
                 p.lifespan++;
                 if (p.x < 0 || p.y < 0 || p.x > width || p.y > height || p.lifespan > this.projectileLifespan) {
@@ -447,13 +443,6 @@ class Unit {
                 p.x += this.projSpeed * Math.cos(p.angle);
                 p.y += this.projSpeed * Math.sin(p.angle);
                 context.globalAlpha = 0.5;
-                // if (p.lifespan % 8 !== 0) {
-                //     context.beginPath();
-                //     context.arc(p.x, p.y, this.projSize, 0, TAU, false);
-                //     context.fillStyle = this.color;
-                //     context.fill();
-                //     context.closePath();
-                // };
                 context.beginPath();
                 context.arc(p.x, p.y, this.projSize, 0, TAU, false);
                 context.fillStyle = this.color;
@@ -467,27 +456,49 @@ class Unit {
                         };
                         playAudio('hit');
                         e.takeHit(this.damage * this.level);
-                        // console.log(`${e.x}, ${e.y} hit`);
-                        // e.remove();
+                    }
+                });
+            });
+        } else if (this.name === 'Vagrant') {
+            if (this.projectiles.length !== this.level) {
+                this.projectiles = [];
+                for (let a = 0; a < this.level; a++) {
+                    console.log(this.x);
+                    this.projectiles.push({ x: this.x + 8 * this.radius * Math.cos(a * TAU / this.level) , y: this.y + 8 * this.radius * Math.sin(a * TAU / this.level), angle: a });
+                };
+            };
+            this.projectiles.forEach((p) => {
+                p.angle = (p.angle + (TAU / currentCooldown)) % TAU;
+                p.x = this.x + 8 * this.radius * Math.cos(p.angle);
+                p.y = this.y + 8 * this.radius * Math.sin(p.angle);
+                context.globalAlpha = 0.5;
+                context.beginPath();
+                context.arc(p.x, p.y, this.projSize, 0, TAU);
+                context.fillStyle = this.color;
+                context.fill();
+                context.closePath();
+                context.globalAlpha = 0.92;
+                game.enemies.forEach((e) => {
+                    if (calcDist(p.x, p.y, e.x, e.y) <= e.radius + this.projSize) {
+                        playAudio('hit');
+                        e.takeHit(this.damage * this.level);
                     }
                 });
             });
         } else {
             game.snake.forEach(u => u.calcAttackSpeed());
         };
-
     };
     attack() {
         if (game.enemies.length > 0 && this.attackCounter > this.attackCooldown) {
             let target = game.enemies[Math.floor(Math.random() * game.enemies.length)];
             if (this.name === 'Enchanter') {
                 currentCooldown = baseCooldown * Math.pow(this.speedFactor, this.level);
-            } else if (this.name !== 'Sprayer') {
+            } else if (this.name !== 'Sprayer' && this.name !== 'Vagrant') {
                 this.projectiles.push({ x: this.x, y: this.y, angle: Math.atan2(target.y - this.y, target.x - this.x), lifespan: 0 });
-            } else {
+            } else if (this.name !== 'Vagrant') {
                 this.projectiles.push({ x: this.x, y: this.y, angle: Math.atan2(target.y - this.y, target.x - this.x) + (Math.random() * Math.PI) - Math.PI / 2, lifespan: 0 });
             };
-            // console.log(this.attackCounter, this.attackCooldown);
             this.attackCounter = 0;
         };
     };
@@ -497,10 +508,11 @@ class Enemy extends Pip {
     constructor(xPos = width / 4, yPos = height / 4, size = 2 * unitSize, health = 10, fillColor = red, velo = baseSpeed * 0.7, direction = 0, turningIncrement = 0.02) {
         super(xPos, yPos, size, health, fillColor, velo, direction, turningIncrement);
         this.jitter = 20 * this.turn;
-        this.bounceable = 101;
+        this.bounceable = Math.random() * 2 * bounceableDelay;
+        this.angle = Math.random() * TAU;
     };
     move() {
-        if (Math.random() > 0.95) {
+        if (Math.random() > 0.98) {
             this.angle += (2 * Math.random() * this.jitter) - this.jitter;
         };
         let dx = this.speed * Math.cos(this.angle);
@@ -524,12 +536,8 @@ class Enemy extends Pip {
         for (let i = 0; i < c.length; i++) {
             let other = c[i];
             let d = calcDist(this.x, this.y, other.x, other.y);
-            if (d < this.radius + other.radius && this.bounceable > 100) {
-                // let r1 = Math.random() < 0.5 ? 1 : -1;
-                // let r2 = Math.random() < 0.5 ? 1 : -1;
-                // this.x += r1 * this.speed * 3;
-                // this.y += r2 * this.speed * 3;
-                this.angle = Math.PI - this.angle;
+            if (d < this.radius + other.radius && this.bounceable > bounceableDelay) {
+                this.angle += (2 * Math.random() * this.jitter) - this.jitter; //! enemy AI
                 this.bounceable = 0;
             };
         };

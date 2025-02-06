@@ -132,8 +132,8 @@ const handleDriving = function () {
 // game.snake.push(new Unit('Trapper'));
 // game.snake.push(new Unit('Sprayer'));
 game.snake.push(new Unit('Ranger'));
-// game.snake.push(new Unit('Enchanter'));
-// game.snake.push(new Unit('Vagrant'));
+game.snake.push(new Unit('Enchanter'));
+game.snake.push(new Unit('Vagrant'));
 
 const draw = function () {
     playBackgroundMusic();
