@@ -6,12 +6,22 @@ const height = canvas.height = canvas.clientHeight;
 const context = canvas.getContext('2d');
 
 const audioCopies = 10;
-const wallAudio = new Audio('../audio/test.mp3');
+const wallAudio = new Audio('../audio/wall-bounce.mp3');
+const lossAudio = new Audio('../audio/loss.mp3');
+const startAudio = new Audio('../audio/start.mp3');
+const killAudio = new Audio('../audio/kill.mp3');
+const dmgAudio = new Audio('../audio/dmg.mp3');
 const wallBounceMP3s = [];
-for (let i = 0; i < audioCopies; i++) {
+const killAudioMP3s = [];
+const dmgAudioMP3s = [];
+[...Array(audioCopies)].map(() => {
     wallBounceMP3s.push(wallAudio.cloneNode());
-};
+    killAudioMP3s.push(killAudio.cloneNode());
+    dmgAudioMP3s.push(dmgAudio.cloneNode());
+});
 let wbIndex = 0;
+let kIndex = 0;
+let dIndex = 0;
 
 const difficultyColors = [
     'lightgreen',
@@ -71,10 +81,21 @@ const calcChaseIncrement = function (meX, meY, meAngle, targetX, targetY, inc) {
     };
 };
 
-const bounceWallAudio = function () {
+const playBounceWallAudio = function () {
     wallBounceMP3s[wbIndex].play();
     wbIndex = (wbIndex + 1) % audioCopies;
 };
+
+const playDmgAudio = function () {
+    dmgAudioMP3s[dIndex].play();
+    dIndex = (dIndex + 1) % audioCopies;
+};
+
+const playKillAudio = function () {
+    killAudioMP3s[kIndex].play();
+    kIndex = (kIndex + 1) % audioCopies;
+};
+
 
 const clearCanvas = function () {
     context.clearRect(0, 0, canvas.width, canvas.height);
@@ -182,6 +203,7 @@ const handleNextArena = function () {
         waveNumEl.innerText = `wave ${game.wave}/${1 + game.arena}`;
         game.isPlaying = true;
         game.choiceMade = false;
+        startAudio.play();
         draw(); //! unsure if needed
         setTimeout(() => shopEl.classList.remove('exit-active'), 1000);
         setTimeout(() => shopEl.classList.add('entry-active'), 1000);
@@ -191,7 +213,7 @@ const handleNextArena = function () {
 };
 
 const showLossMessage = function () {
-    // window.location.reload();
+    lossAudio.play();
     lossEl.style.display = 'grid';
 };
 
@@ -200,7 +222,6 @@ const showWinMessage = function () {
 };
 
 const resetGame = function (diff) {
-    console.log('resetting');
     clearCanvas();
     snek = new Snek();
     game.difficulty = diff;
@@ -418,6 +439,7 @@ class Enemy extends Pip {
             dx = this.speed * Math.cos(this.angle);
         } else if (game.snake.map(u => calcDist(this.x + dx, this.y + dy, u.x, u.y) < this.radius + u.radius).some(x => x === true)) { // if this enemy's movement will make it touch any unit in the snake, then...
             snek.hp -= this.hp / 2;
+            playDmgAudio();
             this.remove(); //! just move on lol
         };
         this.angle = keepWithinPiOf0(this.angle);
@@ -444,6 +466,7 @@ class Enemy extends Pip {
     remove() {
         let index = game.enemies.indexOf(this);
         game.enemies.splice(index, 1);
+        playKillAudio();
     };
     render() {
         if (this.hp <= 0) {
@@ -473,13 +496,13 @@ class Snek extends Pip {
             this.angle *= -1;
             dy = this.speed * Math.sin(this.angle);
             if (!game.audioMuted) {
-                bounceWallAudio();
+                playBounceWallAudio();
             };
         } else if (this.x + dx < this.radius || this.x + dx > canvas.width - this.radius) {
             this.angle = Math.PI - this.angle;
             dx = this.speed * Math.cos(this.angle);
             if (!game.audioMuted) {
-                bounceWallAudio();
+                playBounceWallAudio();
             };
         };
         this.angle = keepWithinPiOf0(this.angle);

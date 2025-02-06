@@ -9,7 +9,7 @@ const game = {
     isPlaying: true,
     spawnCountdown: 0,
     spawnPoint: spawnPoints[0],
-    audioMuted: true,
+    audioMuted: false,
     mouseControl: true,
     choiceMade: true,
     choices: [],
@@ -48,7 +48,7 @@ const keyboardIcon = document.getElementById('keyboard-icon');
 keyboardIcon.style.filter = 'invert(30%)';
 const audioOnEl = document.getElementById('sound-on');
 const audioOffEl = document.getElementById('sound-off');
-audioOnEl.style.filter = 'invert(30%)';
+audioOffEl.style.filter = 'invert(30%)';
 const difficultyMinus = document.getElementById('difficulty-minus');
 const difficultyPlus = document.getElementById('difficulty-plus');
 const difficultyLevel = document.getElementById('difficulty-level');
@@ -169,6 +169,7 @@ const draw = function () {
 
 document.getElementById('begin').addEventListener('click', () => {
     document.getElementById('show-start').checked = true;
+    startAudio.play();
     setTimeout(() => {
         document.querySelector('.welcome').style.display = 'none';
     }, 1000);
