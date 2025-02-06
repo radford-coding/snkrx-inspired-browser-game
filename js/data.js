@@ -95,7 +95,7 @@ const canvasText = function (str, x, y) {
     context.fillText(str, x, y);
 };
 
-const showSpawnLocation = function() {
+const showSpawnLocation = function () {
     context.fillStyle = red;
     // context.fillRect(game.spawnPoint.x, game.spawnPoint.y, 10, 10);
     context.font = `bold ${width / 10}px sans-serif`;
@@ -167,6 +167,7 @@ const showShop = function () {
     choiceConfirmationEl.innerText = 'choose an upgrade!';
     labelCurrentUnitsEl.innerText = 'current units';
     showShopCurrentUnits();
+    game.choices = [];
     chooseRandomUnitUpgrades();
 };
 
@@ -189,8 +190,35 @@ const handleNextArena = function () {
     };
 };
 
-const showLossMessage = function() {
-    window.location.reload();
+const showLossMessage = function () {
+    // window.location.reload();
+    lossEl.style.display = 'grid';
+};
+
+const showWinMessage = function () {
+    winEl.style.display = 'grid';
+};
+
+const resetGame = function (diff) {
+    console.log('resetting');
+    clearCanvas();
+    snek = new Snek();
+    game.difficulty = diff;
+    if (game.difficulty < 1) {
+        game.difficulty = 1;
+    } else if (game.difficulty > 10) {
+        game.difficulty = 10;
+    };
+    game.isPlaying = true;
+    game.spawnCountdown = 0;
+    game.choiceMade = true;
+    game.arena = 1;
+    game.wave = 0;
+    game.snake = [unitChoices[Math.floor(Math.random() * unitChoices.length)]];
+    game.enemies = [];
+    showShopEl.checked = false;
+    showLossEl.checked = false;
+    showWinEl.checked = false;
 };
 
 /*--------------- Classes --------------*/
@@ -364,7 +392,7 @@ class Unit {
     attack() {
         if (game.enemies.length > 0 && this.attackCounter > this.attackCooldown) {
             let target = game.enemies[Math.floor(Math.random() * game.enemies.length)];
-            this.projectiles.push({x: this.x, y: this.y, angle: Math.atan2(target.y - this.y, target.x - this.x), lifespan: 0});
+            this.projectiles.push({ x: this.x, y: this.y, angle: Math.atan2(target.y - this.y, target.x - this.x), lifespan: 0 });
             this.attackCounter = 0;
         };
     };

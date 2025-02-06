@@ -2,7 +2,7 @@
 
 /*-------------- Constants -------------*/
 
-const snek = new Snek();
+let snek = new Snek();
 
 const game = {
     difficulty: 1,
@@ -14,7 +14,7 @@ const game = {
     choiceMade: true,
     choices: [],
     arena: 1,
-    wave: 0, //! change to 0 for gameplay to start, or 2 for instant shop
+    wave: 0,
     maxWave: 3,
     snake: [],
     enemies: [],
@@ -45,10 +45,10 @@ const playBtn = document.getElementById('begin');
 const settingsIcon = document.getElementById('settings');
 const mouseIcon = document.getElementById('mouse-icon');
 const keyboardIcon = document.getElementById('keyboard-icon');
-mouseIcon.style.filter = 'invert(30%)'; // initial
+mouseIcon.style.filter = 'invert(30%)';
 const audioOnEl = document.getElementById('sound-on');
 const audioOffEl = document.getElementById('sound-off');
-audioOnEl.style.filter = 'invert(30%)'; //* initial state matches game.audioMuted
+audioOnEl.style.filter = 'invert(30%)';
 const difficultyMinus = document.getElementById('difficulty-minus');
 const difficultyPlus = document.getElementById('difficulty-plus');
 const difficultyLevel = document.getElementById('difficulty-level');
@@ -69,8 +69,15 @@ const choiceEls = document.querySelectorAll('.choice');
 const explanationEls = document.querySelectorAll('.explanation');
 const choiceConfirmationEl = document.getElementById('choice-confirmation');
 const labelCurrentUnitsEl = document.getElementById('current-units-label');
+
 const lossEl = document.querySelector('.loss');
 const winEl = document.querySelector('.win');
+const lossButtonReplay = document.getElementById('replay-loss');
+const lossButtonReplayEasier = document.getElementById('replay-easier');
+const winButtonReplay = document.getElementById('replay-win');
+const winButtonReplayHarder = document.getElementById('replay-harder');
+const showLossEl = document.getElementById('show-loss');
+const showWinEl = document.getElementById('show-win');
 
 /*-------------- Functions -------------*/
 
@@ -152,6 +159,7 @@ const draw = function () {
         snek.render();
         requestAnimationFrame(draw); //! consider setInterval()
     } else if (showShopEl.checked === true) {
+        console.log(game);
         showShop();
     };
 };
@@ -165,6 +173,29 @@ document.getElementById('begin').addEventListener('click', () => {
         document.querySelector('.welcome').style.display = 'none';
     }, 1000);
     setTimeout(draw, 1000);
+});
+
+lossButtonReplay.addEventListener('click', (e) => {
+    showLossEl.checked = true;
+    resetGame(game.difficulty);
+    setTimeout(() => {
+        lossEl.style.display = 'none';
+    }, 1000);
+    setTimeout(draw, 1000);
+    // replay, hide loss screen
+});
+
+winButtonReplay.addEventListener('click', (e) => {
+    // replay, hide win screen
+});
+
+lossButtonReplayEasier.addEventListener('click', (e) => {
+    // replay with lower difficulty, hdie loss screen
+});
+
+winButtonReplayHarder.addEventListener('click', (e) => {
+
+    // replay with higher difficulty, hide win screen
 });
 
 [mouseIcon, keyboardIcon].forEach(b => b.addEventListener('click', (e) => {

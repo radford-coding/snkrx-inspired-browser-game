@@ -1,6 +1,6 @@
 * {
-    /* margin: 0;
-    padding: 0; */
+    margin: 0;
+    padding: 0;
     box-sizing: border-box;
 }
 
@@ -54,31 +54,31 @@ body {
     margin: 0;
 }
 
-.welcome > h1 {
+.welcome>h1 {
     grid-row: 3 / span 1;
     grid-column: 1 / span 12;
 }
 
-.welcome > h3 {
+.welcome>h3 {
     grid-row: 4 / span 1;
     grid-column: 1 / span 12;
 }
 
-.welcome > h2 {
+.welcome>h2 {
     grid-row: 6 / span 1;
     grid-column: 1 / span 12;
 }
 
-.welcome > p {
+.welcome>p {
     grid-row: 7 / span 1;
     grid-column: 3 / span 7;
 }
 
-.welcome > h3 > a {
+.welcome>h3>a {
     color: var(--white);
 }
 
-.welcome > div {
+.welcome>div {
     grid-row: 9 / span 1;
     grid-column: 3 / span 7;
 }
@@ -253,7 +253,7 @@ nav p {
     /* border: 5px solid white; */
 }
 
-.unit-container > h1 {
+.unit-container>h1 {
     color: var(--white);
     font-size: 2rem;
 }
@@ -443,7 +443,7 @@ nav p {
     justify-content: flex-start;
 }
 
-#hp > div {
+#hp>div {
     width: 4%;
     aspect-ratio: 1;
     /* background-color: var(--white); */
@@ -458,4 +458,80 @@ nav p {
     font-size: 2rem;
     display: flex;
     margin: 2vh 10px;
+}
+
+.loss,
+.win {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 4;
+    background-color: var(--bg);
+    display: grid;
+    grid-template-columns: repeat(11, 1fr);
+    grid-template-rows: repeat(12, 1fr);
+    text-align: center;
+    font-size: 2rem;
+    color: var(--white);
+    transition: all 1s;
+}
+
+.loss>h2,
+.win>h2 {
+    grid-column: 1 / span 11;
+    grid-row: 3 / span 1;
+}
+
+.loss>p,
+.win>p {
+    grid-column: 1 / span 11;
+    grid-row: 5 / span 1;
+}
+
+.loss>button {
+    font-family: "Geo", serif;
+    font-weight: 400;
+    font-style: normal;
+    font-size: 2rem;
+    border-radius: 5px;
+}
+
+.loss>button:hover {
+    background-color: var(--red);
+    cursor: pointer;
+}
+
+.loss>#replay-loss,
+.win>#replay-win {
+    grid-column: 4 / span 1;
+    grid-row: 7 / span 1;
+}
+
+.loss>#replay-easier,
+.win>#replay-harder {
+    grid-column: 8 / span 1;
+    grid-row: 7 / span 1;
+}
+
+.win,
+.loss {
+    display: none;
+}
+
+#show-loss:checked+.loss>button {
+    display: none;
+}
+
+#show-loss:checked+.loss {
+    opacity: 0;
+}
+
+#show-win:checked+.win>button {
+    display: none;
+}
+
+#show-win:checked+.win {
+    opacity: 0;
 }
