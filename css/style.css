@@ -482,6 +482,7 @@ nav p {
     font-size: 2rem;
     color: var(--white);
     transition: all 1s;
+    opacity: 1;
 }
 
 .loss>h2,

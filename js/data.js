@@ -5,23 +5,46 @@ const width = canvas.width = canvas.clientWidth;
 const height = canvas.height = canvas.clientHeight;
 const context = canvas.getContext('2d');
 
-const audioCopies = 10;
-const wallAudio = new Audio('../audio/wall-bounce.mp3');
+let audio = {
+    nCopies: 10,
+    bounce: {
+        index: 0,
+        sounds: [],
+    },
+    kill: {
+        index: 0,
+        sounds: [],
+    },
+    dmg: {
+        index: 0,
+        sounds: [],
+    },
+};
+
+const bgAudioVolume = 0.7;
+const bgQuieterAudioVolume = 0.3;
+
 const lossAudio = new Audio('../audio/loss.mp3');
 const startAudio = new Audio('../audio/start.mp3');
+const upgradeAudio = new Audio('../audio/upgrade.mp3');
+
+const bgAudio1 = new Audio('../audio/bg1.mp3');
+const bgAudio2 = new Audio('../audio/bg2.mp3');
+const bgAudio3 = new Audio('../audio/bg3.mp3');
+const bgAudio4 = new Audio('../audio/bg4.mp3');
+const bgAudio = [bgAudio1, bgAudio2, bgAudio3, bgAudio4];
+let bgIndex = bgAudio.length - 1;
+
+const wallAudio = new Audio('../audio/wall-bounce.mp3');
 const killAudio = new Audio('../audio/kill.mp3');
 const dmgAudio = new Audio('../audio/dmg.mp3');
-const wallBounceMP3s = [];
-const killAudioMP3s = [];
-const dmgAudioMP3s = [];
-[...Array(audioCopies)].map(() => {
-    wallBounceMP3s.push(wallAudio.cloneNode());
-    killAudioMP3s.push(killAudio.cloneNode());
-    dmgAudioMP3s.push(dmgAudio.cloneNode());
+
+[...Array(audio.nCopies)].map(() => {
+    audio.bounce.sounds.push(wallAudio.cloneNode());
+    audio.kill.sounds.push(killAudio.cloneNode());
+    audio.dmg.sounds.push(dmgAudio.cloneNode());
 });
-let wbIndex = 0;
-let kIndex = 0;
-let dIndex = 0;
+
 
 const difficultyColors = [
     'lightgreen',
@@ -81,21 +104,18 @@ const calcChaseIncrement = function (meX, meY, meAngle, targetX, targetY, inc) {
     };
 };
 
-const playBounceWallAudio = function () {
-    wallBounceMP3s[wbIndex].play();
-    wbIndex = (wbIndex + 1) % audioCopies;
+const playBackgroundMusic = function () {
+    if (bgAudio[bgIndex].paused) {
+        bgIndex = (bgIndex + 1) % bgAudio.length;
+        bgAudio[bgIndex].volume = bgAudioVolume;
+        bgAudio[bgIndex].play();
+    };
 };
 
-const playDmgAudio = function () {
-    dmgAudioMP3s[dIndex].play();
-    dIndex = (dIndex + 1) % audioCopies;
+const playAudio = function (noise) {
+    audio[noise].sounds[audio[noise].index].play();
+    audio[noise].index = (audio[noise].index + 1) % audio.nCopies;
 };
-
-const playKillAudio = function () {
-    killAudioMP3s[kIndex].play();
-    kIndex = (kIndex + 1) % audioCopies;
-};
-
 
 const clearCanvas = function () {
     context.clearRect(0, 0, canvas.width, canvas.height);
@@ -237,6 +257,8 @@ const resetGame = function (diff) {
     game.wave = 0;
     game.snake = [unitChoices[Math.floor(Math.random() * unitChoices.length)]];
     game.enemies = [];
+    bgAudio[bgIndex].volume = bgAudioVolume;
+    bgAudio[bgIndex].play();
     showShopEl.checked = false;
     showLossEl.checked = false;
     showWinEl.checked = false;
@@ -439,7 +461,7 @@ class Enemy extends Pip {
             dx = this.speed * Math.cos(this.angle);
         } else if (game.snake.map(u => calcDist(this.x + dx, this.y + dy, u.x, u.y) < this.radius + u.radius).some(x => x === true)) { // if this enemy's movement will make it touch any unit in the snake, then...
             snek.hp -= this.hp / 2;
-            playDmgAudio();
+            playAudio('dmg');
             this.remove(); //! just move on lol
         };
         this.angle = keepWithinPiOf0(this.angle);
@@ -466,7 +488,7 @@ class Enemy extends Pip {
     remove() {
         let index = game.enemies.indexOf(this);
         game.enemies.splice(index, 1);
-        playKillAudio();
+        playAudio('kill');
     };
     render() {
         if (this.hp <= 0) {
@@ -496,13 +518,13 @@ class Snek extends Pip {
             this.angle *= -1;
             dy = this.speed * Math.sin(this.angle);
             if (!game.audioMuted) {
-                playBounceWallAudio();
+                playAudio('bounce');
             };
         } else if (this.x + dx < this.radius || this.x + dx > canvas.width - this.radius) {
             this.angle = Math.PI - this.angle;
             dx = this.speed * Math.cos(this.angle);
             if (!game.audioMuted) {
-                playBounceWallAudio();
+                playAudio('bounce');
             };
         };
         this.angle = keepWithinPiOf0(this.angle);
@@ -513,15 +535,10 @@ class Snek extends Pip {
             this.history.pop();
         };
     };
-    drawTrail() { // TODO: remove
-        context.fillStyle = yellow;
-        this.history.forEach((h) => {
-            context.fillRect(h.x, h.y, 2, 2);
-        });
-    };
     draw() {
         if (this.hp <= 0) {
             game.isPlaying = false;
+            bgAudio.forEach(a => a.volume = 0);
             showLossMessage();
         };
         let u = 0;
@@ -544,7 +561,6 @@ class Snek extends Pip {
     render() {
         this.move();
         this.draw();
-        // this.drawTrail();
     };
 };
 

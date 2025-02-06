@@ -127,15 +127,16 @@ const handleDriving = function () {
 };
 
 //! starting snake
-game.snake.push(unitChoices[Math.floor(Math.random() * unitChoices.length)]);
+// game.snake.push(unitChoices[Math.floor(Math.random() * unitChoices.length)]);
 // game.snake.push(new Unit('Rogue'));
 // game.snake.push(new Unit('Fighter'));
 // game.snake.push(new Unit('Curser'));
 // game.snake.push(new Unit('Sprayer'));
-// game.snake.push(new Unit('Ranger'));
+game.snake.push(new Unit('Ranger'));
 // game.snake.push(new Unit('Vagrant'));
 
 const draw = function () {
+    playBackgroundMusic();
     if (game.isPlaying) {
         clearCanvas();
         handleDriving();
@@ -159,7 +160,6 @@ const draw = function () {
         snek.render();
         requestAnimationFrame(draw); //! consider setInterval()
     } else if (showShopEl.checked === true) {
-        console.log(game);
         showShop();
     };
 };
@@ -178,6 +178,7 @@ document.getElementById('begin').addEventListener('click', () => {
 
 lossButtonReplay.addEventListener('click', (e) => {
     showLossEl.checked = true;
+    startAudio.play();
     resetGame(game.difficulty);
     setTimeout(() => {
         lossEl.style.display = 'none';
@@ -187,6 +188,7 @@ lossButtonReplay.addEventListener('click', (e) => {
 
 winButtonReplay.addEventListener('click', (e) => {
     showWinEl.checked = true;
+    startAudio.play();
     resetGame(game.difficulty);
     setTimeout(() => {
         winEl.style.display = 'none';
@@ -196,6 +198,7 @@ winButtonReplay.addEventListener('click', (e) => {
 
 lossButtonReplayEasier.addEventListener('click', (e) => {
     showLossEl.checked = true;
+    startAudio.play();
     resetGame(game.difficulty - 1);
     setTimeout(() => {
         lossEl.style.display = 'none';
@@ -205,6 +208,7 @@ lossButtonReplayEasier.addEventListener('click', (e) => {
 
 winButtonReplayHarder.addEventListener('click', (e) => {
     showWinEl.checked = true;
+    startAudio.play();
     resetGame(game.difficulty + 1);
     setTimeout(() => {
         winEl.style.display = 'none';
@@ -249,7 +253,12 @@ difficultyPlus.addEventListener('click', () => {
 canvas.addEventListener('mousemove', handleMouseMove);
 
 settingsIcon.addEventListener('click', () => {
-    game.isPlaying = !game.isPlaying
+    game.isPlaying = !game.isPlaying;
+    if (bgAudio[bgIndex].volume < bgAudioVolume) {
+        bgAudio[bgIndex].volume = bgAudioVolume;
+    } else {
+        bgAudio[bgIndex].volume = bgQuieterAudioVolume;
+    };
     draw();
 });
 
@@ -262,15 +271,16 @@ explanationEls.forEach(c => c.addEventListener('click', (e) => {
         let index = Number(e.target.id.slice(-1)) - 1;
         let chosenUnit = game.choices[index];
         if (game.snake.map(u => u.name).includes(chosenUnit.name)) {
-            // level up
             game.snake.find(u => u.name === chosenUnit.name).level++;
             snek.maxHP += chosenUnit.hp;
             snek.hp = snek.maxHP;
+            upgradeAudio.play();
             choiceConfirmationEl.innerText = `${chosenUnit.name} chosen!`;
         } else {
             game.snake.push(chosenUnit);
             snek.maxHP += chosenUnit.hp;
             snek.hp = snek.maxHP;
+            upgradeAudio.play();
             choiceConfirmationEl.innerText = `${chosenUnit.name} chosen!`;
         };
         game.choiceMade = true;
