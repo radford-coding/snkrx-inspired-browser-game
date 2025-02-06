@@ -24,12 +24,12 @@ const game = {
 
 const unitChoices = [
     new Unit('Rogue'),
-    new Unit('Enchanter'),
     new Unit('Fighter'),
-    new Unit('Curser'),
+    new Unit('Trapper'),
     new Unit('Sprayer'),
     new Unit('Ranger'),
-    new Unit('Vagrant')
+    new Unit('Vagrant'),
+    new Unit('Enchanter')
 ];
 
 /*---------- Variables (state) ---------*/
@@ -127,13 +127,13 @@ const handleDriving = function () {
 };
 
 //! starting snake
-// game.snake.push(unitChoices[Math.floor(Math.random() * unitChoices.length)]);
+// game.snake.push(unitChoices[Math.floor(Math.random() * (unitChoices.length - 1))]);
 // game.snake.push(new Unit('Rogue'));
 // game.snake.push(new Unit('Fighter'));
-// game.snake.push(new Unit('Curser'));
-game.snake.push(new Unit('Sprayer'));
+game.snake.push(new Unit('Trapper'));
+// game.snake.push(new Unit('Sprayer'));
 // game.snake.push(new Unit('Ranger'));
-game.snake.push(new Unit('Enchanter'));
+// game.snake.push(new Unit('Enchanter'));
 // game.snake.push(new Unit('Vagrant'));
 
 const draw = function () {

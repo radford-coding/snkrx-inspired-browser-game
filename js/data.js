@@ -11,6 +11,10 @@ let audio = {
         index: 0,
         sounds: [],
     },
+    hit: {
+        index: 0,
+        sounds: [],
+    },
     kill: {
         index: 0,
         sounds: [],
@@ -39,11 +43,13 @@ const bgAudio = [bgAudio1, bgAudio2, bgAudio3, bgAudio4];
 let bgIndex = bgAudio.length - 1;
 
 const wallAudio = new Audio(deployedAudioPath + 'wall-bounce.mp3' + '?raw=true');
+const hitAudio = new Audio(deployedAudioPath + 'hit.mp3' + '?raw=true');
 const killAudio = new Audio(deployedAudioPath + 'kill.mp3' + '?raw=true');
 const dmgAudio = new Audio(deployedAudioPath + 'dmg.mp3' + '?raw=true');
 
 [...Array(audio.nCopies)].map(() => {
     audio.bounce.sounds.push(wallAudio.cloneNode());
+    audio.hit.sounds.push(hitAudio.cloneNode());
     audio.kill.sounds.push(killAudio.cloneNode());
     audio.dmg.sounds.push(dmgAudio.cloneNode());
 });
@@ -261,7 +267,7 @@ const resetGame = function (diff) {
     game.choiceMade = true;
     game.arena = 1;
     game.wave = 0;
-    game.snake = [unitChoices[Math.floor(Math.random() * unitChoices.length)]];
+    game.snake = [unitChoices[Math.floor(Math.random() * (unitChoices.length - 1))]];
     game.enemies = [];
     bgAudio[bgIndex].volume = bgAudioVolume;
     bgAudio[bgIndex].play();
@@ -362,17 +368,17 @@ class Unit {
                 // baseCooldown *= 0.85;
                 this.description = 'no attack<br>buffs allies\' attack speed<br>low hp';
                 break;
-            case 'Curser':
+            case 'Trapper':
                 this.color = purple;
                 this.hp = 8;
-                this.speedFactor = 0.8;
+                this.speedFactor = 1;
                 this.damage = 15;
-                this.projectileLifespanFactor = 0.5;
+                this.projectileLifespanFactor = 2;
                 this.attackCooldown = baseCooldown / this.speedFactor;
                 this.projSize = baseProjSize / this.speedFactor;
-                this.projSpeed = baseProjSpeed * this.speedFactor;
+                this.projSpeed = 0;
                 this.projectileLifespan = this.projectileLifespanFactor * width / (this.projSpeed + EPSILON);
-                this.description = 'slow move speed<br>landmine attack<br>low hp';
+                this.description = 'mid move speed<br>landmine attack<br>low hp';
                 break;
             case 'Sprayer':
                 this.color = orange;
@@ -452,6 +458,7 @@ class Unit {
                         if (this.name !== 'Ranger') {
                             this.projectiles.splice(this.projectiles.indexOf(p), 1);
                         };
+                        playAudio('hit');
                         e.takeHit(this.damage * this.level);
                         // console.log(`${e.x}, ${e.y} hit`);
                         // e.remove();
