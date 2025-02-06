@@ -21,12 +21,12 @@ let audio = {
     },
 };
 
-const bgAudioVolume = 0.7;
-const bgQuieterAudioVolume = 0.3;
-
 const lossAudio = new Audio('../audio/loss.mp3');
 const startAudio = new Audio('../audio/start.mp3');
 const upgradeAudio = new Audio('../audio/upgrade.mp3');
+
+const bgAudioVolume = 0.7;
+const bgQuieterAudioVolume = 0.3;
 
 const bgAudio1 = new Audio('../audio/bg1.mp3');
 const bgAudio2 = new Audio('../audio/bg2.mp3');
@@ -71,7 +71,7 @@ const spawnPoints = [
 const spawnDuration = 100;
 
 const TAU = 2 * Math.PI;
-const EPSILON = 0.01;
+const EPSILON = 0.001;
 const unitSize = 20;
 const baseSpeed = 3;
 let baseCooldown = 100;
@@ -322,17 +322,19 @@ class Unit {
                 this.attackCooldown = baseCooldown / this.speedFactor;
                 this.projSize = baseProjSize / this.speedFactor;
                 this.projSpeed = baseProjSpeed * this.speedFactor;
+                this.projectileLifespan = this.projectileLifespanFactor * width / (this.projSpeed + EPSILON);
                 this.description = 'fast move speed<br>ranged attack<br>low hp';
                 break;
             case 'Fighter':
                 this.color = yellow;
                 this.hp = 30;
-                this.speedFactor = 0.81;
+                this.speedFactor = 0.71;
                 this.damage = 10;
-                this.projectileLifespanFactor = 0.1;
+                this.projectileLifespanFactor = EPSILON / 35;
                 this.attackCooldown = baseCooldown / this.speedFactor;
-                this.projSize = baseProjSize / this.speedFactor;
-                this.projSpeed = baseProjSpeed * this.speedFactor;
+                this.projSize = baseProjSize * 30;
+                this.projSpeed = 0;
+                this.projectileLifespan = this.projectileLifespanFactor * width / (this.projSpeed + EPSILON);
                 this.description = 'slow move speed<br>short-range, heavy attack<br>high hp';
                 break;
             case 'Ranger':
@@ -344,6 +346,7 @@ class Unit {
                 this.attackCooldown = baseCooldown / this.speedFactor;
                 this.projSize = baseProjSize / this.speedFactor;
                 this.projSpeed = baseProjSpeed * this.speedFactor;
+                this.projectileLifespan = this.projectileLifespanFactor * width / (this.projSpeed + EPSILON);
                 this.description = 'good move speed<br>piercing ranged attack<br>mid hp';
                 break;
             case 'Wizard':
@@ -355,6 +358,7 @@ class Unit {
                 this.attackCooldown = baseCooldown / this.speedFactor;
                 this.projSize = baseProjSize / this.speedFactor;
                 this.projSpeed = baseProjSpeed * this.speedFactor;
+                this.projectileLifespan = this.projectileLifespanFactor * width / (this.projSpeed + EPSILON);
                 this.description = 'mid move speed<br>area attack<br>low hp';
                 break;
             case 'Curser':
@@ -366,6 +370,7 @@ class Unit {
                 this.attackCooldown = baseCooldown / this.speedFactor;
                 this.projSize = baseProjSize / this.speedFactor;
                 this.projSpeed = baseProjSpeed * this.speedFactor;
+                this.projectileLifespan = this.projectileLifespanFactor * width / (this.projSpeed + EPSILON);
                 this.description = 'slow move speed<br>landmine attack<br>low hp';
                 break;
             case 'Sprayer':
@@ -377,6 +382,7 @@ class Unit {
                 this.attackCooldown = baseCooldown / this.speedFactor / 10;
                 this.projSize = baseProjSize / 2;
                 this.projSpeed = baseProjSpeed * this.speedFactor / 3;
+                this.projectileLifespan = this.projectileLifespanFactor * width / (this.projSpeed + EPSILON);
                 this.description = 'low move speed<br>spray attack<br>low hp';
                 break;
             case 'Vagrant':
@@ -388,14 +394,12 @@ class Unit {
                 this.attackCooldown = baseCooldown / this.speedFactor;
                 this.projSize = baseProjSize / this.speedFactor;
                 this.projSpeed = baseProjSpeed * this.speedFactor;
+                this.projectileLifespan = this.projectileLifespanFactor * width / (this.projSpeed + EPSILON);
                 this.description = 'fast move speed<br>orbital attack<br>mid hp';
                 break;
             default:
-                this.color = bg;
-                console.log('invalid unit type'); //! remove
+                break;
         };
-        //! currently all fairly similar; set these inside switch/case
-        this.projectileLifespan = this.projectileLifespanFactor * width / this.projSpeed;
     };
     levelUp() {
         this.level++;
@@ -415,15 +419,30 @@ class Unit {
             if (p.x < 0 || p.y < 0 || p.x > width || p.y > height || p.lifespan > this.projectileLifespan) {
                 this.projectiles.splice(this.projectiles.indexOf(p), 1);
             };
+            console.log(p.lifespan, this.projectileLifespan);
             p.x += this.projSpeed * Math.cos(p.angle);
             p.y += this.projSpeed * Math.sin(p.angle);
-            context.fillRect(p.x, p.y, this.projSize, this.projSize);
+            // if (p.lifespan % 8 !== 0) {
+            //     context.beginPath();
+            //     context.arc(p.x, p.y, this.projSize, 0, TAU, false);
+            //     context.fillStyle = this.color;
+            //     context.fill();
+            //     context.closePath();
+            // };
+            context.globalAlpha = 0.5;
+            context.beginPath();
+            context.arc(p.x, p.y, this.projSize, 0, TAU, false);
+            context.fillStyle = this.color;
+            context.fill();
+            context.closePath();
+            context.globalAlpha = 0.92;
             game.enemies.forEach((e) => {
-                if (calcDist(p.x, p.y, e.x, e.y) < e.radius) {
+                if (calcDist(p.x, p.y, e.x, e.y) < e.radius + this.projSize / 2) {
                     if (this.name !== 'Ranger') {
                         this.projectiles.splice(this.projectiles.indexOf(p), 1);
                     };
                     e.takeHit(this.damage);
+                    // console.log(`${e.x}, ${e.y} hit`);
                     // e.remove();
                 }
             });
