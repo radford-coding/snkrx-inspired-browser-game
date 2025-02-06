@@ -35,7 +35,8 @@ const bgAudio4 = new Audio('../audio/bg4.mp3');
 const bgAudio = [bgAudio1, bgAudio2, bgAudio3, bgAudio4];
 let bgIndex = bgAudio.length - 1;
 
-const wallAudio = new Audio('../audio/wall-bounce.mp3');
+// const wallAudio = new Audio('../audio/wall-bounce.mp3');
+const wallAudio = new Audio('https://github.com/radford-coding/snkrx-inspired-browser-game/blob/main/audio/wall-bounce.mp3');
 const killAudio = new Audio('../audio/kill.mp3');
 const dmgAudio = new Audio('../audio/dmg.mp3');
 
