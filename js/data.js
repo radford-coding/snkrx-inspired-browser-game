@@ -24,7 +24,8 @@ let audio = {
 const deployedAudioPath = 'https://github.com/radford-coding/snkrx-inspired-browser-game/blob/main/audio/';
 
 const lossAudio = new Audio(deployedAudioPath + 'loss.mp3' + '?raw=true');
-const startAudio = new Audio(deployedAudioPath + 'start.mp3' + '?raw=true');
+// const startAudio = new Audio(deployedAudioPath + 'start.mp3' + '?raw=true');
+const startAudio = new Audio('audio/start.mp3');
 const upgradeAudio = new Audio(deployedAudioPath + 'upgrade.mp3' + '?raw=true');
 
 
@@ -38,9 +39,8 @@ const bgAudio4 = new Audio(deployedAudioPath + 'bg4.mp3' + '?raw=true');
 const bgAudio = [bgAudio1, bgAudio2, bgAudio3, bgAudio4];
 let bgIndex = bgAudio.length - 1;
 
-// const wallAudio = new Audio('../audio/wall-bounce.mp3');
-// const wallAudio = new Audio('https://github.com/radford-coding/snkrx-inspired-browser-game/blob/main/audio/wall-bounce.mp3?raw=true');
-const wallAudio = new Audio(deployedAudioPath + 'wall-bounce.mp3' + '?raw=true');
+const wallAudio = new Audio('audio/wall-bounce.mp3');
+// const wallAudio = new Audio(deployedAudioPath + 'wall-bounce.mp3' + '?raw=true');
 const killAudio = new Audio(deployedAudioPath + 'kill.mp3' + '?raw=true');
 const dmgAudio = new Audio(deployedAudioPath + 'dmg.mp3' + '?raw=true');
 
