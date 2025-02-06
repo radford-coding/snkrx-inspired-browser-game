@@ -75,6 +75,7 @@ const EPSILON = 0.001;
 const unitSize = 20;
 const baseSpeed = 3;
 let baseCooldown = 100;
+let currentCooldown = 100;
 const baseProjSpeed = 7;
 const baseProjSize = 7;
 const winningArena = 5
@@ -328,7 +329,7 @@ class Unit {
             case 'Fighter':
                 this.color = yellow;
                 this.hp = 30;
-                this.speedFactor = 0.71;
+                this.speedFactor = 0.59;
                 this.damage = 10;
                 this.projectileLifespanFactor = EPSILON / 35;
                 this.attackCooldown = baseCooldown / this.speedFactor;
@@ -349,17 +350,12 @@ class Unit {
                 this.projectileLifespan = this.projectileLifespanFactor * width / (this.projSpeed + EPSILON);
                 this.description = 'good move speed<br>piercing ranged attack<br>mid hp';
                 break;
-            case 'Wizard':
+            case 'Enchanter':
                 this.color = blue;
                 this.hp = 10;
-                this.speedFactor = 1;
-                this.damage = 10;
-                this.projectileLifespanFactor = 0.5;
-                this.attackCooldown = baseCooldown / this.speedFactor;
-                this.projSize = baseProjSize / this.speedFactor;
-                this.projSpeed = baseProjSpeed * this.speedFactor;
-                this.projectileLifespan = this.projectileLifespanFactor * width / (this.projSpeed + EPSILON);
-                this.description = 'mid move speed<br>area attack<br>low hp';
+                this.speedFactor = 0.9;
+                // baseCooldown *= 0.85;
+                this.description = 'no attack<br>buffs allies\' attack speed<br>low hp';
                 break;
             case 'Curser':
                 this.color = purple;
@@ -383,7 +379,7 @@ class Unit {
                 this.projSize = baseProjSize / 2;
                 this.projSpeed = baseProjSpeed * this.speedFactor / 3;
                 this.projectileLifespan = this.projectileLifespanFactor * width / (this.projSpeed + EPSILON);
-                this.description = 'low move speed<br>spray attack<br>low hp';
+                this.description = 'low move speed<br>fast spray attack<br>low hp';
                 break;
             case 'Vagrant':
                 this.color = white;
@@ -405,6 +401,13 @@ class Unit {
         this.level++;
         this.hp *= 2; // double hp
     };
+    calcAttackSpeed() {
+        if (this.name !== 'Sprayer') {
+            this.attackCooldown = currentCooldown / this.speedFactor;
+        } else {
+            this.attackCooldown = currentCooldown / this.speedFactor / 10;
+        };
+    };
     drawUnit(x, y) {
         context.beginPath();
         context.arc(x, y, this.radius, 0, TAU, false);
@@ -414,47 +417,58 @@ class Unit {
         this.x = x;
         this.y = y;
         this.attackCounter++;
-        this.projectiles.forEach((p) => {
-            p.lifespan++;
-            if (p.x < 0 || p.y < 0 || p.x > width || p.y > height || p.lifespan > this.projectileLifespan) {
-                this.projectiles.splice(this.projectiles.indexOf(p), 1);
-            };
-            console.log(p.lifespan, this.projectileLifespan);
-            p.x += this.projSpeed * Math.cos(p.angle);
-            p.y += this.projSpeed * Math.sin(p.angle);
-            // if (p.lifespan % 8 !== 0) {
-            //     context.beginPath();
-            //     context.arc(p.x, p.y, this.projSize, 0, TAU, false);
-            //     context.fillStyle = this.color;
-            //     context.fill();
-            //     context.closePath();
-            // };
-            context.globalAlpha = 0.5;
-            context.beginPath();
-            context.arc(p.x, p.y, this.projSize, 0, TAU, false);
-            context.fillStyle = this.color;
-            context.fill();
-            context.closePath();
-            context.globalAlpha = 0.92;
-            game.enemies.forEach((e) => {
-                if (calcDist(p.x, p.y, e.x, e.y) < e.radius + this.projSize / 2) {
-                    if (this.name !== 'Ranger') {
-                        this.projectiles.splice(this.projectiles.indexOf(p), 1);
-                    };
-                    e.takeHit(this.damage);
-                    // console.log(`${e.x}, ${e.y} hit`);
-                    // e.remove();
-                }
-            });
-        });
+        this.drawProjectiles();
     };
-    handleHit() {
+    drawProjectiles() {
+        if (this.name !== 'Enchanter') {
+            this.projectiles.forEach((p) => {
+                p.lifespan++;
+                if (p.x < 0 || p.y < 0 || p.x > width || p.y > height || p.lifespan > this.projectileLifespan) {
+                    this.projectiles.splice(this.projectiles.indexOf(p), 1);
+                };
+                p.x += this.projSpeed * Math.cos(p.angle);
+                p.y += this.projSpeed * Math.sin(p.angle);
+                context.globalAlpha = 0.5;
+                // if (p.lifespan % 8 !== 0) {
+                //     context.beginPath();
+                //     context.arc(p.x, p.y, this.projSize, 0, TAU, false);
+                //     context.fillStyle = this.color;
+                //     context.fill();
+                //     context.closePath();
+                // };
+                context.beginPath();
+                context.arc(p.x, p.y, this.projSize, 0, TAU, false);
+                context.fillStyle = this.color;
+                context.fill();
+                context.closePath();
+                context.globalAlpha = 0.92;
+                game.enemies.forEach((e) => {
+                    if (calcDist(p.x, p.y, e.x, e.y) <= e.radius + this.projSize) {
+                        if (this.name !== 'Ranger') {
+                            this.projectiles.splice(this.projectiles.indexOf(p), 1);
+                        };
+                        e.takeHit(this.damage * this.level);
+                        // console.log(`${e.x}, ${e.y} hit`);
+                        // e.remove();
+                    }
+                });
+            });
+        } else {
+            game.snake.forEach(u => u.calcAttackSpeed());
+        };
 
     };
     attack() {
         if (game.enemies.length > 0 && this.attackCounter > this.attackCooldown) {
             let target = game.enemies[Math.floor(Math.random() * game.enemies.length)];
-            this.projectiles.push({ x: this.x, y: this.y, angle: Math.atan2(target.y - this.y, target.x - this.x), lifespan: 0 });
+            if (this.name === 'Enchanter') {
+                currentCooldown = baseCooldown * Math.pow(this.speedFactor, this.level);
+            } else if (this.name !== 'Sprayer') {
+                this.projectiles.push({ x: this.x, y: this.y, angle: Math.atan2(target.y - this.y, target.x - this.x), lifespan: 0 });
+            } else {
+                this.projectiles.push({ x: this.x, y: this.y, angle: Math.atan2(target.y - this.y, target.x - this.x) + (Math.random() * Math.PI) - Math.PI / 2, lifespan: 0 });
+            };
+            console.log(this.attackCounter, this.attackCooldown);
             this.attackCounter = 0;
         };
     };

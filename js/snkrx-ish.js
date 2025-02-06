@@ -24,7 +24,7 @@ const game = {
 
 const unitChoices = [
     new Unit('Rogue'),
-    new Unit('Wizard'),
+    new Unit('Enchanter'),
     new Unit('Fighter'),
     new Unit('Curser'),
     new Unit('Sprayer'),
@@ -129,10 +129,11 @@ const handleDriving = function () {
 //! starting snake
 // game.snake.push(unitChoices[Math.floor(Math.random() * unitChoices.length)]);
 // game.snake.push(new Unit('Rogue'));
-game.snake.push(new Unit('Fighter'));
+// game.snake.push(new Unit('Fighter'));
 // game.snake.push(new Unit('Curser'));
-// game.snake.push(new Unit('Sprayer'));
+game.snake.push(new Unit('Sprayer'));
 // game.snake.push(new Unit('Ranger'));
+game.snake.push(new Unit('Enchanter'));
 // game.snake.push(new Unit('Vagrant'));
 
 const draw = function () {
@@ -274,12 +275,18 @@ explanationEls.forEach(c => c.addEventListener('click', (e) => {
             game.snake.find(u => u.name === chosenUnit.name).level++;
             snek.maxHP += chosenUnit.hp;
             snek.hp = snek.maxHP;
+            if (chosenUnit.name === 'Enchanter') {
+                baseCooldown *= 0.85;
+            };
             upgradeAudio.play();
             choiceConfirmationEl.innerText = `${chosenUnit.name} chosen!`;
         } else {
             game.snake.push(chosenUnit);
             snek.maxHP += chosenUnit.hp;
             snek.hp = snek.maxHP;
+            if (chosenUnit.name === 'Enchanter') {
+                baseCooldown *= 0.85;
+            };
             upgradeAudio.play();
             choiceConfirmationEl.innerText = `${chosenUnit.name} chosen!`;
         };
