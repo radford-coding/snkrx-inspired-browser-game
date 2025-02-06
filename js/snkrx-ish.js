@@ -234,10 +234,12 @@ winButtonReplayHarder.addEventListener('click', (e) => {
         audioOnEl.style.filter = 'invert(80%)';
         audioOffEl.style.filter = 'invert(30%)';
         game.audioMuted = false;
+        playBackgroundMusic();
     } else {
         audioOffEl.style.filter = 'invert(80%)';
         audioOnEl.style.filter = 'invert(30%)';
         game.audioMuted = true;
+        bgAudio[bgIndex].pause();
     };
 }));
 

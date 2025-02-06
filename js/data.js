@@ -24,8 +24,7 @@ let audio = {
 const deployedAudioPath = 'https://github.com/radford-coding/snkrx-inspired-browser-game/blob/main/audio/';
 
 const lossAudio = new Audio(deployedAudioPath + 'loss.mp3' + '?raw=true');
-// const startAudio = new Audio(deployedAudioPath + 'start.mp3' + '?raw=true');
-const startAudio = new Audio('audio/start.mp3');
+const startAudio = new Audio(deployedAudioPath + 'start.mp3' + '?raw=true');
 const upgradeAudio = new Audio(deployedAudioPath + 'upgrade.mp3' + '?raw=true');
 
 
@@ -39,8 +38,7 @@ const bgAudio4 = new Audio(deployedAudioPath + 'bg4.mp3' + '?raw=true');
 const bgAudio = [bgAudio1, bgAudio2, bgAudio3, bgAudio4];
 let bgIndex = bgAudio.length - 1;
 
-const wallAudio = new Audio('audio/wall-bounce.mp3');
-// const wallAudio = new Audio(deployedAudioPath + 'wall-bounce.mp3' + '?raw=true');
+const wallAudio = new Audio(deployedAudioPath + 'wall-bounce.mp3' + '?raw=true');
 const killAudio = new Audio(deployedAudioPath + 'kill.mp3' + '?raw=true');
 const dmgAudio = new Audio(deployedAudioPath + 'dmg.mp3' + '?raw=true');
 
@@ -111,7 +109,7 @@ const calcChaseIncrement = function (meX, meY, meAngle, targetX, targetY, inc) {
 };
 
 const playBackgroundMusic = function () {
-    if (bgAudio[bgIndex].paused) {
+    if (!game.audioMuted && bgAudio[bgIndex].paused) {
         bgIndex = (bgIndex + 1) % bgAudio.length;
         bgAudio[bgIndex].volume = bgAudioVolume;
         bgAudio[bgIndex].play();
@@ -119,8 +117,10 @@ const playBackgroundMusic = function () {
 };
 
 const playAudio = function (noise) {
-    audio[noise].sounds[audio[noise].index].play();
-    audio[noise].index = (audio[noise].index + 1) % audio.nCopies;
+    if (!game.audioMuted) {
+        audio[noise].sounds[audio[noise].index].play();
+        audio[noise].index = (audio[noise].index + 1) % audio.nCopies;
+    };
 };
 
 const clearCanvas = function () {
