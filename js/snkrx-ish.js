@@ -15,7 +15,6 @@ const game = {
     choices: [],
     arena: 1,
     wave: 0,
-    maxWave: 3,
     snake: [],
     enemies: [],
 };
@@ -130,9 +129,9 @@ const handleDriving = function () {
 // game.snake.push(unitChoices[Math.floor(Math.random() * (unitChoices.length - 1))]);
 // game.snake.push(new Unit('Rogue'));
 // game.snake.push(new Unit('Fighter'));
-game.snake.push(new Unit('Trapper'));
+// game.snake.push(new Unit('Trapper'));
 // game.snake.push(new Unit('Sprayer'));
-// game.snake.push(new Unit('Ranger'));
+game.snake.push(new Unit('Ranger'));
 // game.snake.push(new Unit('Enchanter'));
 // game.snake.push(new Unit('Vagrant'));
 
@@ -142,6 +141,7 @@ const draw = function () {
         clearCanvas();
         handleDriving();
         if (game.enemies.length === 0 && game.wave === 1 + game.arena) {
+            console.log(`wave ${game.wave}/${game.arena}`);
             showShop();
         } else if (game.enemies.length === 0 && game.spawnCountdown < spawnDuration) {
             if (game.spawnCountdown % (spawnDuration / 2) < (spawnDuration / 4)) {

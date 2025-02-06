@@ -31,7 +31,6 @@ const lossAudio = new Audio(deployedAudioPath + 'loss.mp3' + '?raw=true');
 const startAudio = new Audio(deployedAudioPath + 'start.mp3' + '?raw=true');
 const upgradeAudio = new Audio(deployedAudioPath + 'upgrade.mp3' + '?raw=true');
 
-
 const bgAudioVolume = 0.7;
 const bgQuieterAudioVolume = 0.2;
 
@@ -44,6 +43,7 @@ let bgIndex = bgAudio.length - 1;
 
 const wallAudio = new Audio(deployedAudioPath + 'wall-bounce.mp3' + '?raw=true');
 const hitAudio = new Audio(deployedAudioPath + 'hit.mp3' + '?raw=true');
+hitAudio.volume = 0;
 const killAudio = new Audio(deployedAudioPath + 'kill.mp3' + '?raw=true');
 const dmgAudio = new Audio(deployedAudioPath + 'dmg.mp3' + '?raw=true');
 
@@ -53,7 +53,6 @@ const dmgAudio = new Audio(deployedAudioPath + 'dmg.mp3' + '?raw=true');
     audio.kill.sounds.push(killAudio.cloneNode());
     audio.dmg.sounds.push(dmgAudio.cloneNode());
 });
-
 
 const difficultyColors = [
     'lightgreen',
@@ -67,8 +66,6 @@ const difficultyColors = [
     'darkred'
 ];
 
-
-
 const spawnFrac = 1 / 5;
 const spawnPoints = [
     { x: width * spawnFrac, y: height * spawnFrac },
@@ -77,17 +74,17 @@ const spawnPoints = [
     { x: width * spawnFrac, y: height * (1 - spawnFrac) },
     { x: width * (1 - spawnFrac), y: height * (1 - spawnFrac) }
 ];
-const spawnDuration = 100;
 
 const TAU = 2 * Math.PI;
 const EPSILON = 0.001;
-const unitSize = 20;
-const baseSpeed = 3;
+const spawnDuration = 100;
+const unitSize = 20; // make relative to canvas width
+const baseSpeed = 3; // make relative to canvas width
 let baseCooldown = 100;
 let currentCooldown = 100;
-const baseProjSpeed = 7;
-const baseProjSize = 7;
-const winningArena = 5
+const baseProjSpeed = 7; // make relative to canvas width
+const baseProjSize = 7; // make relative to canvas width
+const winningArena = 2;
 const bg = '#303030';
 const gray = '#4B4B4B';
 const red = '#E91E39';
@@ -156,20 +153,26 @@ const showSpawnLocation = function () {
 
 };
 
+const spawnNormalWave = function () {
+    console.log(game.enemies.length, game.wave, game.arena);
+    game.spawnCountdown = 0;
+    let n = game.arena * 2 + game.difficulty * 2 + game.wave + Math.floor(Math.random() * 5);
+    // console.log(`${n} enemies`);
+    for (let i = 0; i < n; i++) {
+        game.enemies.push(new Enemy(game.spawnPoint.x, game.spawnPoint.y));
+    };
+    game.wave += 1;
+    waveNumEl.innerText = `wave ${game.wave}/${1 + game.arena}`;
+    game.spawnPoint = spawnPoints[Math.floor(Math.random() * spawnPoints.length)];
+};
+
 const generateWave = function () {
-    if (game.enemies.length === 0 && game.wave < 1 + game.arena) {
-        game.spawnCountdown = 0;
-        let n = game.arena * 2 + game.difficulty * 2 + game.wave + Math.floor(Math.random() * 5);
-        // console.log(`${n} enemies`);
-        for (let i = 0; i < n; i++) {
-            game.enemies.push(new Enemy(game.spawnPoint.x, game.spawnPoint.y));
-        };
-        game.wave += 1;
-        waveNumEl.innerText = `wave ${game.wave}/${1 + game.arena}`;
-        game.spawnPoint = spawnPoints[Math.floor(Math.random() * spawnPoints.length)];
-        return;
-    } else if (game.enemies.length === 0 && game.wave === 1 + game.arena && game.arena === winningArena) {
-        console.log('you win!'); //!
+    if (game.enemies.length === 0 && game.wave === game.arena && game.arena === winningArena) {
+        console.log('you win');
+        showWinMessage();
+        game.isPlaying = false;
+    } else if (game.enemies.length === 0 && game.wave <= game.arena) {
+        spawnNormalWave();
     };
 };
 
@@ -246,11 +249,16 @@ const handleNextArena = function () {
 
 const showLossMessage = function () {
     lossAudio.play();
+    game.isPlaying = false;
     lossEl.style.display = 'grid';
+    showLossEl.checked = false;
 };
 
 const showWinMessage = function () {
+    // play winning audio
+    game.isPlaying = false;
     winEl.style.display = 'grid';
+    showWinEl.checked = false;
 };
 
 const resetGame = function (diff) {
@@ -266,7 +274,9 @@ const resetGame = function (diff) {
     game.spawnCountdown = 0;
     game.choiceMade = true;
     game.arena = 1;
+    arenaNumEl.innerText = `arena ${game.arena}`;
     game.wave = 0;
+    waveNumEl.innerText = `wave ${game.wave}/${1 + game.arena}`;
     game.snake = [unitChoices[Math.floor(Math.random() * (unitChoices.length - 1))]];
     game.enemies = [];
     bgAudio[bgIndex].volume = bgAudioVolume;
@@ -353,7 +363,7 @@ class Unit {
                 this.color = green;
                 this.hp = 20;
                 this.speedFactor = 1.11;
-                this.damage = 5;
+                this.damage = 10;
                 this.projectileLifespanFactor = 1;
                 this.attackCooldown = baseCooldown / this.speedFactor;
                 this.projSize = baseProjSize / this.speedFactor;
@@ -428,7 +438,7 @@ class Unit {
         this.x = x;
         this.y = y;
         this.attackCounter++;
-        this.drawProjectiles();
+        // this.drawProjectiles();
     };
     drawProjectiles() {
         if (this.name !== 'Enchanter') {
@@ -586,6 +596,7 @@ class Snek extends Pip {
             bgAudio.forEach(a => a.volume = 0);
             showLossMessage();
         };
+        game.snake.forEach(u => u.drawProjectiles());
         let u = 0;
         let spacingFactor = 0.75 * (baseSpeed / this.speed);
         for (let i = 0; i < this.history.length; i += Math.floor((unitSize * spacingFactor))) {

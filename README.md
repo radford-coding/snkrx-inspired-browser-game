@@ -46,3 +46,4 @@ Each arena consists of a few waves of chiplets spawning in random locations. Wav
 9. [MDN tutorial on bouncing ball simulation](https://developer.mozilla.org/en-US/docs/Learn_web_development/Extensions/Advanced_JavaScript_objects/Object_building_practice)
 9. [smooth hover descriptions](https://stackoverflow.com/questions/38567028/fade-in-out-element-on-parent-div-hover-with-css)
 9. (CSS font sizing)[https://www.sitepoint.com/understanding-and-using-rem-units-in-css/]
+9. (getting audio to play on deployed GitHub site)[https://stackoverflow.com/questions/70813487/how-to-play-sounds-in-github]

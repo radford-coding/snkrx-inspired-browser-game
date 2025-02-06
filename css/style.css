@@ -541,3 +541,7 @@ nav p {
 #show-win:checked+.win {
     opacity: 0;
 }
+
+#show-loss, #show-win {
+    display: none;
+}
