@@ -21,25 +21,28 @@ let audio = {
     },
 };
 
-const lossAudio = new Audio('../audio/loss.mp3');
-const startAudio = new Audio('../audio/start.mp3');
-const upgradeAudio = new Audio('../audio/upgrade.mp3');
+const deployedAudioPath = 'https://github.com/radford-coding/snkrx-inspired-browser-game/blob/main/audio/';
+
+const lossAudio = new Audio(deployedAudioPath + 'loss.mp3' + '?raw=true');
+const startAudio = new Audio(deployedAudioPath + 'start.mp3' + '?raw=true');
+const upgradeAudio = new Audio(deployedAudioPath + 'upgrade.mp3' + '?raw=true');
+
 
 const bgAudioVolume = 0.7;
-const bgQuieterAudioVolume = 0.3;
+const bgQuieterAudioVolume = 0.2;
 
-const bgAudio1 = new Audio('../audio/bg1.mp3');
-const bgAudio2 = new Audio('../audio/bg2.mp3');
-const bgAudio3 = new Audio('../audio/bg3.mp3');
-const bgAudio4 = new Audio('../audio/bg4.mp3');
+const bgAudio1 = new Audio(deployedAudioPath + 'bg1.mp3' + '?raw=true');
+const bgAudio2 = new Audio(deployedAudioPath + 'bg2.mp3' + '?raw=true');
+const bgAudio3 = new Audio(deployedAudioPath + 'bg3.mp3' + '?raw=true');
+const bgAudio4 = new Audio(deployedAudioPath + 'bg4.mp3' + '?raw=true');
 const bgAudio = [bgAudio1, bgAudio2, bgAudio3, bgAudio4];
 let bgIndex = bgAudio.length - 1;
 
 // const wallAudio = new Audio('../audio/wall-bounce.mp3');
-// const wallAudio = new Audio('https://radford-coding.github.io/audio/wall-bounce.mp3');
-const wallAudio = new Audio('https://github.com/radford-coding/snkrx-inspired-browser-game/blob/main/audio/wall-bounce.mp3?raw=true');
-const killAudio = new Audio('../audio/kill.mp3');
-const dmgAudio = new Audio('../audio/dmg.mp3');
+// const wallAudio = new Audio('https://github.com/radford-coding/snkrx-inspired-browser-game/blob/main/audio/wall-bounce.mp3?raw=true');
+const wallAudio = new Audio(deployedAudioPath + 'wall-bounce.mp3' + '?raw=true');
+const killAudio = new Audio(deployedAudioPath + 'kill.mp3' + '?raw=true');
+const dmgAudio = new Audio(deployedAudioPath + 'dmg.mp3' + '?raw=true');
 
 [...Array(audio.nCopies)].map(() => {
     audio.bounce.sounds.push(wallAudio.cloneNode());
@@ -470,7 +473,7 @@ class Unit {
             } else {
                 this.projectiles.push({ x: this.x, y: this.y, angle: Math.atan2(target.y - this.y, target.x - this.x) + (Math.random() * Math.PI) - Math.PI / 2, lifespan: 0 });
             };
-            console.log(this.attackCounter, this.attackCooldown);
+            // console.log(this.attackCounter, this.attackCooldown);
             this.attackCounter = 0;
         };
     };
