@@ -45,5 +45,6 @@ Each arena consists of a few waves of chiplets spawning in random locations. Wav
 8. [matching canvas size to dynamic grid size](https://stackoverflow.com/questions/21179779/canvas-arc75-75-50-0-3-1415-true-draws-oval-instead-of-circle)
 9. [MDN tutorial on bouncing ball simulation](https://developer.mozilla.org/en-US/docs/Learn_web_development/Extensions/Advanced_JavaScript_objects/Object_building_practice)
 9. [smooth hover descriptions](https://stackoverflow.com/questions/38567028/fade-in-out-element-on-parent-div-hover-with-css)
-9. (CSS font sizing)[https://www.sitepoint.com/understanding-and-using-rem-units-in-css/]
-9. (getting audio to play on deployed GitHub site)[https://stackoverflow.com/questions/70813487/how-to-play-sounds-in-github]
+9. [CSS font sizing](https://www.sitepoint.com/understanding-and-using-rem-units-in-css/)
+9. [getting audio to play on deployed GitHub site](https://stackoverflow.com/questions/70813487/how-to-play-sounds-in-github)
+9. [steady FPS with requestAnimationFrame](https://stackoverflow.com/questions/19764018/controlling-fps-with-requestanimationframe)

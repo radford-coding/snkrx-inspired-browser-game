@@ -1,8 +1,14 @@
+/*-------------- Variables -------------*/
 
+let now = Date.now();
+let then = Date.now();
+let elapsed = 0;
+let fpsInterval = 1000 / 60;
+let snek = new Snek();
 
 /*-------------- Constants -------------*/
 
-let snek = new Snek();
+
 
 const game = {
     difficulty: 1,
@@ -125,24 +131,33 @@ const handleDriving = function () {
     };
 };
 
-//! starting snake
-// game.snake.push(unitChoices[Math.floor(Math.random() * (unitChoices.length - 1))]);
-// game.snake.push(new Unit('Rogue'));
-// game.snake.push(new Unit('Fighter'));
-// game.snake.push(new Unit('Trapper'));
-// game.snake.push(new Unit('Sprayer'));
-game.snake.push(new Unit('Ranger'));
-game.snake.push(new Unit('Enchanter'));
-game.snake.push(new Unit('Vagrant'));
+const init = function () {
+    chooseRandomUnitUpgrades();
+    //! starting snake
+    // game.snake.push(unitChoices[Math.floor(Math.random() * (unitChoices.length - 1))]);
+    // game.snake.push(new Unit('Rogue'));
+    // game.snake.push(new Unit('Fighter'));
+    // game.snake.push(new Unit('Trapper'));
+    // game.snake.push(new Unit('Sprayer'));
+    game.snake.push(new Unit('Ranger'));
+    game.snake.push(new Unit('Enchanter'));
+    game.snake.push(new Unit('Vagrant'));
+};
+init();
+
+
 
 const draw = function () {
+    requestAnimationFrame(draw);
+    now = Date.now();
+    elapsed = now - then;
     playBackgroundMusic();
-    if (game.isPlaying) {
+    if (game.isPlaying && elapsed > fpsInterval) {
+        then = now - (elapsed % fpsInterval);
         clearCanvas();
         handleDriving();
         if (game.enemies.length === 0 && game.arena === winningArena && game.wave === 1 + game.arena) {
-            // win
-            console.log('you win');
+            // console.log('you win');
             showWinMessage();
             game.isPlaying = false;
         } else if (game.enemies.length === 0 && game.wave === 1 + game.arena && game.arena < winningArena) {
@@ -164,8 +179,7 @@ const draw = function () {
         enemiesLeftEl.innerText = `enemies remaining: ${game.enemies.length}`;
         game.enemies.forEach(e => e.render());
         snek.render();
-        requestAnimationFrame(draw); //! consider setInterval()
-    } else if (showShopEl.checked === true) {
+    } else if (showShopEl.checked === true && !game.choiceMade) {
         showShop();
     };
 };

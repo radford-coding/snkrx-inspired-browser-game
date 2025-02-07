@@ -218,8 +218,6 @@ const showShop = function () {
     choiceConfirmationEl.innerText = 'choose an upgrade!';
     labelCurrentUnitsEl.innerText = 'current units';
     showShopCurrentUnits();
-    game.choices = [];
-    chooseRandomUnitUpgrades();
 };
 
 const handleNextArena = function () {
@@ -238,8 +236,12 @@ const handleNextArena = function () {
             u.projectiles = [];
         });
         draw();
-        setTimeout(() => shopEl.classList.remove('exit-active'), 1000);
-        setTimeout(() => shopEl.classList.add('entry-active'), 1000);
+        setTimeout(() => {
+            shopEl.classList.remove('exit-active');
+            shopEl.classList.add('entry-active');
+            game.choices = [];
+            chooseRandomUnitUpgrades();
+        }, 1500);
     } else {
         nextArenaButton.innerHTML = 'choose first';
     };
@@ -463,7 +465,6 @@ class Unit {
             if (this.projectiles.length !== this.level) {
                 this.projectiles = [];
                 for (let a = 0; a < this.level; a++) {
-                    console.log(this.x);
                     this.projectiles.push({ x: this.x + 8 * this.radius * Math.cos(a * TAU / this.level) , y: this.y + 8 * this.radius * Math.sin(a * TAU / this.level), angle: a });
                 };
             };
