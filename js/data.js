@@ -39,7 +39,6 @@ let audio = {
         index: 0,
         sounds: [],
     },
-    
 };
 
 const deployedAudioPath = 'https://github.com/radford-coding/snkrx-inspired-browser-game/blob/main/audio/';
@@ -104,12 +103,12 @@ const spawnPoints = [
 const TAU = 2 * Math.PI;
 const EPSILON = 0.001;
 const spawnDuration = 100;
-const unitSize = 20; // make relative to canvas width
-const baseSpeed = 3; // make relative to canvas width
 let baseCooldown = 100;
 let currentCooldown = 100;
-const baseProjSpeed = 7; // make relative to canvas width
-const baseProjSize = 7; // make relative to canvas width
+const unitSize = width * 0.03;
+const baseSpeed = width * 0.0045;
+const baseProjSpeed = baseSpeed * 2.25;
+const baseProjSize = unitSize * .3;
 const bounceableDelay = 75;
 const winningArena = 2;
 const bg = '#303030';
@@ -139,7 +138,7 @@ const calcChaseIncrement = function (meX, meY, meAngle, targetX, targetY, inc) {
 };
 
 const playBackgroundMusic = function () {
-    if (!game.audioMuted && bgAudio[bgIndex].paused) {
+    if (!game.audioMuted && bgAudio[bgIndex].paused && game.isPlaying) {
         bgIndex = (bgIndex + 1) % bgAudio.length;
         bgAudio[bgIndex].volume = bgAudioVolume;
         bgAudio[bgIndex].play();
@@ -176,14 +175,22 @@ const showSpawnLocation = function () {
     context.fillStyle = red;
     context.font = `bold ${width / 10}px sans-serif`;
     context.fillText('X', game.spawnPoint.x, game.spawnPoint.y);
+};
 
+const damageEnemy = function (enemy, unit) {
+    playAudio('hit');
+    enemy.takeHit(unit.damage * unit.level);
 };
 
 const spawnNormalWave = function () {
     game.spawnCountdown = 0;
     let n = game.arena * 2 + game.difficulty * 2 + game.wave + Math.floor(Math.random() * 5);
     for (let i = 0; i < n; i++) {
-        game.enemies.push(new Enemy(game.spawnPoint.x, game.spawnPoint.y));
+        if (Math.random() < 0.5) {
+            game.enemies.push(new Enemy(game.spawnPoint.x, game.spawnPoint.y, 2 * unitSize, 2 * unitSize, 'spawner', purple, baseSpeed / 2));
+        } else {
+            game.enemies.push(new Enemy(game.spawnPoint.x, game.spawnPoint.y, size = 1.25 * unitSize + Math.random() * unitSize, health = size * (1 + (game.arena - 1) / winningArena)));
+        };
     };
     game.wave += 1;
     waveNumEl.innerText = `wave ${game.wave}/${1 + game.arena}`;
@@ -360,17 +367,17 @@ class Unit {
     constructor(type) {
         this.level = 1;
         this.radius = unitSize;
-        this.x = width/2;
-        this.y = height/2;
+        this.x = width / 2;
+        this.y = height / 2;
         this.name = type;
         this.attackCounter = 0;
         this.projectiles = [];
         switch (type) {
             case 'Rogue':
                 this.color = red;
-                this.hp = 10;
+                this.hp = unitSize / 2;
                 this.speedFactor = 1.23;
-                this.damage = 5;
+                this.damage = unitSize;
                 this.projectileLifespanFactor = 0.5;
                 this.attackCooldown = baseCooldown / this.speedFactor;
                 this.projSize = baseProjSize / this.speedFactor;
@@ -380,9 +387,9 @@ class Unit {
                 break;
             case 'Fighter':
                 this.color = yellow;
-                this.hp = 30;
-                this.speedFactor = 0.59;
-                this.damage = 10;
+                this.hp = unitSize * 5;
+                this.speedFactor = 0.6;
+                this.damage = unitSize * 2;
                 this.projectileLifespanFactor = EPSILON / 35;
                 this.attackCooldown = baseCooldown / this.speedFactor;
                 this.projSize = baseProjSize * 30;
@@ -487,8 +494,7 @@ class Unit {
                         if (this.name !== 'Ranger') {
                             this.projectiles.splice(this.projectiles.indexOf(p), 1);
                         };
-                        playAudio('hit');
-                        e.takeHit(this.damage * this.level);
+                        damageEnemy(e, this);
                     }
                 });
             });
@@ -496,7 +502,7 @@ class Unit {
             if (this.projectiles.length !== this.level) {
                 this.projectiles = [];
                 for (let a = 0; a < this.level; a++) {
-                    this.projectiles.push({ x: this.x + 8 * this.radius * Math.cos(a * TAU / this.level) , y: this.y + 8 * this.radius * Math.sin(a * TAU / this.level), angle: a });
+                    this.projectiles.push({ x: this.x + 8 * this.radius * Math.cos(a * TAU / this.level), y: this.y + 8 * this.radius * Math.sin(a * TAU / this.level), angle: a });
                 };
             };
             this.projectiles.forEach((p) => {
@@ -512,8 +518,7 @@ class Unit {
                 context.globalAlpha = 0.92;
                 game.enemies.forEach((e) => {
                     if (calcDist(p.x, p.y, e.x, e.y) <= e.radius + this.projSize) {
-                        playAudio('hit');
-                        e.takeHit(this.damage * this.level);
+                        damageEnemy(e, this);
                     }
                 });
             });
@@ -539,11 +544,13 @@ class Unit {
 };
 
 class Enemy extends Pip {
-    constructor(xPos = width / 4, yPos = height / 4, size = 2 * unitSize, health = 10, fillColor = red, velo = baseSpeed * 0.7, direction = 0, turningIncrement = 0.02) {
+    constructor(xPos = width / 4, yPos = height / 4, size = 1.25 * unitSize + Math.random() * unitSize, health = size, type = 'basic', fillColor = red, velo = baseSpeed / (size / unitSize), direction = Math.random() * TAU, turningIncrement = 0.02) {
         super(xPos, yPos, size, health, fillColor, velo, direction, turningIncrement);
         this.jitter = 20 * this.turn;
         this.bounceable = Math.random() * 2 * bounceableDelay;
         this.angle = Math.random() * TAU;
+        this.counter = 0;
+        this.type = type;
     };
     move() {
         if (Math.random() > 0.98) {
@@ -560,18 +567,26 @@ class Enemy extends Pip {
         } else if (game.snake.map(u => calcDist(this.x + dx, this.y + dy, u.x, u.y) < this.radius + u.radius).some(x => x === true)) { // if this enemy's movement will make it touch any unit in the snake, then...
             snek.hp -= this.hp / 2;
             playAudio('dmg');
-            this.remove(); //! just move on lol
+            this.remove();
         };
         this.angle = keepWithinPiOf0(this.angle);
         this.x += dx;
         this.y += dy;
+        if (this.type === 'spawner') {
+            this.counter++;
+            if (this.counter > baseCooldown * 6) {
+                // game.enemies.push(new Enemy(this.x, this.y, this.radius / 10, this.color)); //! perhaps a different type of mini spawn?
+                game.enemies.push(new Enemy(this.x, this.y, this.radius / 2, this.radius, 'basic', purple, this.speed, Math.random() * TAU, 0.02));
+                this.counter = 0;
+            };
+        };
     };
     checkForCollisions(c = []) {
         for (let i = 0; i < c.length; i++) {
             let other = c[i];
             let d = calcDist(this.x, this.y, other.x, other.y);
             if (d < this.radius + other.radius && this.bounceable > bounceableDelay) {
-                this.angle += (2 * Math.random() * this.jitter) - this.jitter; //! enemy AI
+                this.angle += (2 * Math.random() * this.jitter) - this.jitter;
                 this.bounceable = 0;
             };
         };
@@ -630,6 +645,7 @@ class Snek extends Pip {
         };
     };
     draw() {
+        // console.log(`${this.hp}/${this.maxHP}`);
         if (this.hp <= 0) {
             game.isPlaying = false;
             bgAudio.forEach(a => a.volume = 0);
@@ -656,6 +672,7 @@ class Snek extends Pip {
     render() {
         this.move();
         this.draw();
+        // console.log(this.speed);
     };
 };
 

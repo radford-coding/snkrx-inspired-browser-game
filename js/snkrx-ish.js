@@ -156,7 +156,6 @@ const draw = function () {
             showWinMessage();
             game.isPlaying = false;
         } else if (game.enemies.length === 0 && game.wave === 1 + game.arena && game.arena < winningArena) {
-            console.log(`wave ${game.wave}/${game.arena}`);
             showShop();
         } else if (game.enemies.length === 0 && game.spawnCountdown < spawnDuration) {
             if (game.spawnCountdown % (spawnDuration / 2) < (spawnDuration / 4)) {
@@ -166,7 +165,6 @@ const draw = function () {
         } else if (game.enemies.length === 0 && game.spawnCountdown >= spawnDuration) {
             generateWave();
         };
-        //! collisions
         for (let i = 0; i < game.enemies.length; i++) {
             let toCheck = [game.enemies.slice(i + 1), game.snake].flat();
             game.enemies[i].checkForCollisions(toCheck);
