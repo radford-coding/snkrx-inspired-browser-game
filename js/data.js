@@ -110,7 +110,7 @@ const baseSpeed = width * 0.0045;
 const baseProjSpeed = baseSpeed * 2.25;
 const baseProjSize = unitSize * .3;
 const bounceableDelay = 75;
-const winningArena = 2;
+const winningArena = 5;
 const bg = '#303030';
 const gray = '#4B4B4B';
 const red = '#E91E39';
@@ -179,7 +179,7 @@ const showSpawnLocation = function () {
 
 const damageEnemy = function (enemy, unit) {
     playAudio('hit');
-    enemy.takeHit(unit.damage * Math.pow(unit.level, 1.2));
+    enemy.takeHit(unit.damage * Math.pow(unit.level, 1.1));
 };
 
 const spawnNormalWave = function () {
@@ -187,7 +187,7 @@ const spawnNormalWave = function () {
     let n = game.arena * 2 + game.difficulty * 2 + game.wave + Math.floor(Math.random() * 5);
     for (let i = 0; i < n; i++) {
         if (Math.random() <= game.difficulty / 10) {
-            game.enemies.push(new Enemy(game.spawnPoint.x, game.spawnPoint.y, 2 * unitSize, (1 + game.difficulty) * unitSize , 'spawner', purple, baseSpeed / 2));
+            game.enemies.push(new Enemy(game.spawnPoint.x, game.spawnPoint.y, 2 * unitSize, (1 + game.difficulty) * unitSize, 'spawner', purple, baseSpeed / 2));
         } else {
             game.enemies.push(new Enemy(game.spawnPoint.x, game.spawnPoint.y, size = 1.25 * unitSize + Math.random() * unitSize, unitSize * (1 + (game.arena - 1) / winningArena)));
         };
@@ -565,7 +565,7 @@ class Enemy extends Pip {
             this.angle = Math.PI - this.angle;
             dx = this.speed * Math.cos(this.angle);
         } else if (game.snake.map(u => calcDist(this.x + dx, this.y + dy, u.x, u.y) < this.radius + u.radius).some(x => x === true)) { // if this enemy's movement will make it touch any unit in the snake, then...
-            snek.hp -= this.hp / 2;
+            snek.hp -= this.hp / 4;
             playAudio('dmg');
             this.remove();
         };
@@ -615,7 +615,7 @@ class Enemy extends Pip {
 };
 
 class Snek extends Pip {
-    constructor(xPos = width / 2, yPos = height / 2, size = unitSize, health = 10, fillColor = white, velo = baseSpeed, direction = -0.1, turningIncrement = 0.07) {
+    constructor(xPos = width / 2, yPos = height / 2, size = unitSize, health = unitSize, fillColor = white, velo = baseSpeed, direction = -0.1, turningIncrement = 0.07) {
         super(xPos, yPos, size, health, fillColor, velo, direction, turningIncrement);
         this.history = [{ x: xPos, y: yPos }];
         this.maxHP = this.hp;

@@ -4,7 +4,9 @@ let now = Date.now();
 let then = Date.now();
 let elapsed = 0;
 let fpsInterval = 1000 / 65;
+
 let snek = new Snek();
+console.log(`hp: ${snek.hp}`);
 
 /*-------------- Constants -------------*/
 
@@ -143,6 +145,8 @@ init();
 
 
 const draw = function () {
+
+    console.log(snek.hp, snek.maxHP);
     requestAnimationFrame(draw);
     now = Date.now();
     elapsed = now - then;
