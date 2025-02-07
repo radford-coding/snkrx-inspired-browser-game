@@ -181,6 +181,12 @@ const showShopCurrentUnits = function () {
     };
 };
 
+const clearShopCurrentUnits = function () {
+    for (let i = 0; i < 8; i++) {
+        shopCurrentUnits[i].style.display = 'none';
+    };
+};
+
 const chooseRandomUnitUpgrades = function () {
     if (game.choices.length === 0) {
         //! there may be a better way to choose 3 distinct random units
@@ -279,6 +285,7 @@ const resetGame = function (diff) {
     waveNumEl.innerText = `wave ${game.wave}/${1 + game.arena}`;
     game.snake = [unitChoices[Math.floor(Math.random() * (unitChoices.length - 1))]];
     game.enemies = [];
+    clearShopCurrentUnits();
     bgAudio[bgIndex].volume = bgAudioVolume;
     bgAudio[bgIndex].play();
     showShopEl.checked = false;

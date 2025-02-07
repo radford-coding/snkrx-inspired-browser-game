@@ -3,7 +3,7 @@
 let now = Date.now();
 let then = Date.now();
 let elapsed = 0;
-let fpsInterval = 1000 / 60;
+let fpsInterval = 1000 / 65;
 let snek = new Snek();
 
 /*-------------- Constants -------------*/
@@ -157,7 +157,6 @@ const draw = function () {
         clearCanvas();
         handleDriving();
         if (game.enemies.length === 0 && game.arena === winningArena && game.wave === 1 + game.arena) {
-            // console.log('you win');
             showWinMessage();
             game.isPlaying = false;
         } else if (game.enemies.length === 0 && game.wave === 1 + game.arena && game.arena < winningArena) {
