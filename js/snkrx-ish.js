@@ -8,8 +8,6 @@ let snek = new Snek();
 
 /*-------------- Constants -------------*/
 
-
-
 const game = {
     difficulty: 1,
     isPlaying: true,
@@ -24,8 +22,6 @@ const game = {
     snake: [],
     enemies: [],
 };
-
-
 
 const unitChoices = [
     new Unit('Rogue'),
@@ -135,13 +131,13 @@ const init = function () {
     chooseRandomUnitUpgrades();
     //! starting snake
     // game.snake.push(unitChoices[Math.floor(Math.random() * (unitChoices.length - 1))]);
-    // game.snake.push(new Unit('Rogue'));
+    game.snake.push(new Unit('Rogue'));
     // game.snake.push(new Unit('Fighter'));
     // game.snake.push(new Unit('Trapper'));
     // game.snake.push(new Unit('Sprayer'));
-    game.snake.push(new Unit('Ranger'));
-    game.snake.push(new Unit('Enchanter'));
-    game.snake.push(new Unit('Vagrant'));
+    // game.snake.push(new Unit('Ranger'));
+    // game.snake.push(new Unit('Enchanter'));
+    // game.snake.push(new Unit('Vagrant'));
 };
 init();
 

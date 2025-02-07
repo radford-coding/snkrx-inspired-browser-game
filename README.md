@@ -6,7 +6,7 @@ A twist on the classic Snake, this **autobattler roguelike** by [a327ex](https:/
 
 The snake is made up of units with different abilities. The player's job is to steer the snake during the arenas, getting close enough to the enemy chiplets to do damage without getting close enough to collide and lose hp.
 
-After clearing each arena, a choice of unit upgrades is available. The original uses coins to buy units, but I am doing a simple pick-1-of-3 system. Collecting a new unit adds it to your snake as a lvl-1 unit, and choosing a unit you already have makes that unit more powerful.
+After clearing each arena, a choice of unit upgrades is available - a simple choice of 3. Collecting a new unit adds it to your snake as a lvl-1 unit, and choosing a unit you already have makes that unit more powerful.
 
 <!-- The enemy chiplets come in a few different flavors:
 

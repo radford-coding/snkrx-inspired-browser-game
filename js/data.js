@@ -23,6 +23,23 @@ let audio = {
         index: 0,
         sounds: [],
     },
+    shoot1: {
+        index: 0,
+        sounds: [],
+    },
+    shoot2: {
+        index: 0,
+        sounds: [],
+    },
+    shoot3: {
+        index: 0,
+        sounds: [],
+    },
+    shoot4: {
+        index: 0,
+        sounds: [],
+    },
+    
 };
 
 const deployedAudioPath = 'https://github.com/radford-coding/snkrx-inspired-browser-game/blob/main/audio/';
@@ -44,15 +61,23 @@ let bgIndex = bgAudio.length - 1;
 
 const wallAudio = new Audio(deployedAudioPath + 'wall-bounce.mp3' + '?raw=true');
 const hitAudio = new Audio(deployedAudioPath + 'hit.mp3' + '?raw=true');
-hitAudio.volume = 0;
+// hitAudio.volume = 0;
 const killAudio = new Audio(deployedAudioPath + 'kill.mp3' + '?raw=true');
 const dmgAudio = new Audio(deployedAudioPath + 'dmg.mp3' + '?raw=true');
+const shoot1Audio = new Audio(deployedAudioPath + 'shoot1.mp3' + '?raw=true');
+const shoot2Audio = new Audio(deployedAudioPath + 'shoot2.mp3' + '?raw=true');
+const shoot3Audio = new Audio(deployedAudioPath + 'shoot3.mp3' + '?raw=true');
+const shoot4Audio = new Audio(deployedAudioPath + 'shoot4.mp3' + '?raw=true');
 
 [...Array(audio.nCopies)].map(() => {
     audio.bounce.sounds.push(wallAudio.cloneNode());
     audio.hit.sounds.push(hitAudio.cloneNode());
     audio.kill.sounds.push(killAudio.cloneNode());
     audio.dmg.sounds.push(dmgAudio.cloneNode());
+    audio.shoot1.sounds.push(shoot1Audio.cloneNode());
+    audio.shoot2.sounds.push(shoot2Audio.cloneNode());
+    audio.shoot3.sounds.push(shoot3Audio.cloneNode());
+    audio.shoot4.sounds.push(shoot4Audio.cloneNode());
 });
 
 const difficultyColors = [
@@ -205,7 +230,6 @@ const chooseRandomUnitUpgrades = function () {
             explanationEls[i].innerHTML = `${game.choices[i].name}<br>${game.choices[i].description}`;
         };
     };
-
 };
 
 const recalculateSnakeSpeed = function () {
@@ -503,8 +527,10 @@ class Unit {
             if (this.name === 'Enchanter') {
                 currentCooldown = baseCooldown * Math.pow(this.speedFactor, this.level);
             } else if (this.name !== 'Sprayer' && this.name !== 'Vagrant') {
+                playAudio('shoot1');
                 this.projectiles.push({ x: this.x, y: this.y, angle: Math.atan2(target.y - this.y, target.x - this.x), lifespan: 0 });
             } else if (this.name !== 'Vagrant') {
+                playAudio('shoot2');
                 this.projectiles.push({ x: this.x, y: this.y, angle: Math.atan2(target.y - this.y, target.x - this.x) + (Math.random() * Math.PI) - Math.PI / 2, lifespan: 0 });
             };
             this.attackCounter = 0;
