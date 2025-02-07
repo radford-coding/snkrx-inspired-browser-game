@@ -441,7 +441,7 @@ nav p {
 }
 
 #hp {
-    width: 50%; 
+    width: 50%;
     display: flex;
     flex-flow: row-reverse nowrap;
     align-items: flex-start;
@@ -496,15 +496,18 @@ nav p {
     grid-row: 5 / span 1;
 }
 
-.loss>button {
+.loss>button,
+.win>button {
     font-family: "Geo", serif;
     font-weight: 400;
     font-style: normal;
     font-size: 2rem;
     border-radius: 5px;
+    aspect-ratio: 1;
 }
 
-.loss>button:hover {
+.loss>button:hover,
+.win>button:hover {
     background-color: var(--red);
     cursor: pointer;
 }
@@ -542,6 +545,7 @@ nav p {
     opacity: 0;
 }
 
-#show-loss, #show-win {
+#show-loss,
+#show-win {
     display: none;
 }

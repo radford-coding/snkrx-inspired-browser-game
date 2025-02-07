@@ -179,17 +179,17 @@ const showSpawnLocation = function () {
 
 const damageEnemy = function (enemy, unit) {
     playAudio('hit');
-    enemy.takeHit(unit.damage * unit.level);
+    enemy.takeHit(unit.damage * Math.pow(unit.level, 1.2));
 };
 
 const spawnNormalWave = function () {
     game.spawnCountdown = 0;
     let n = game.arena * 2 + game.difficulty * 2 + game.wave + Math.floor(Math.random() * 5);
     for (let i = 0; i < n; i++) {
-        if (Math.random() < 0.5) {
-            game.enemies.push(new Enemy(game.spawnPoint.x, game.spawnPoint.y, 2 * unitSize, 2 * unitSize, 'spawner', purple, baseSpeed / 2));
+        if (Math.random() <= game.difficulty / 10) {
+            game.enemies.push(new Enemy(game.spawnPoint.x, game.spawnPoint.y, 2 * unitSize, (1 + game.difficulty) * unitSize , 'spawner', purple, baseSpeed / 2));
         } else {
-            game.enemies.push(new Enemy(game.spawnPoint.x, game.spawnPoint.y, size = 1.25 * unitSize + Math.random() * unitSize, health = size * (1 + (game.arena - 1) / winningArena)));
+            game.enemies.push(new Enemy(game.spawnPoint.x, game.spawnPoint.y, size = 1.25 * unitSize + Math.random() * unitSize, unitSize * (1 + (game.arena - 1) / winningArena)));
         };
     };
     game.wave += 1;
@@ -360,7 +360,6 @@ class Pip {
         this.x += dx;
         this.y += dy;
     };
-
 };
 
 class Unit {
@@ -375,7 +374,7 @@ class Unit {
         switch (type) {
             case 'Rogue':
                 this.color = red;
-                this.hp = unitSize / 2;
+                this.hp = unitSize;
                 this.speedFactor = 1.23;
                 this.damage = unitSize;
                 this.projectileLifespanFactor = 0.5;
@@ -399,29 +398,29 @@ class Unit {
                 break;
             case 'Ranger':
                 this.color = green;
-                this.hp = 20;
+                this.hp = unitSize * 2;
                 this.speedFactor = 1.11;
-                this.damage = 10;
+                this.damage = unitSize / 10;
                 this.projectileLifespanFactor = 1;
                 this.attackCooldown = baseCooldown / this.speedFactor;
                 this.projSize = baseProjSize / this.speedFactor;
-                this.projSpeed = baseProjSpeed * this.speedFactor;
+                this.projSpeed = baseProjSpeed * this.speedFactor * 3;
                 this.projectileLifespan = this.projectileLifespanFactor * width / (this.projSpeed + EPSILON);
                 this.description = 'good move speed<br>piercing ranged attack<br>mid hp';
                 break;
             case 'Enchanter':
                 this.color = blue;
-                this.hp = 10;
+                this.hp = unitSize;
                 this.speedFactor = 0.9;
                 this.description = 'no attack<br>buffs allies\' attack speed<br>low hp';
                 break;
             case 'Trapper':
                 this.color = purple;
-                this.hp = 8;
+                this.hp = unitSize;
                 this.speedFactor = 1;
-                this.damage = 15;
+                this.damage = unitSize;
                 this.projectileLifespanFactor = 2;
-                this.attackCooldown = baseCooldown / this.speedFactor;
+                this.attackCooldown = 2 * baseCooldown / this.speedFactor;
                 this.projSize = baseProjSize / this.speedFactor;
                 this.projSpeed = 0;
                 this.projectileLifespan = this.projectileLifespanFactor * width / (this.projSpeed + EPSILON);
@@ -429,9 +428,9 @@ class Unit {
                 break;
             case 'Sprayer':
                 this.color = orange;
-                this.hp = 8;
+                this.hp = unitSize;
                 this.speedFactor = 0.72;
-                this.damage = 2;
+                this.damage = unitSize / 5;
                 this.projectileLifespanFactor = 0.8;
                 this.attackCooldown = baseCooldown / this.speedFactor / 10;
                 this.projSize = baseProjSize / 2;
@@ -441,9 +440,9 @@ class Unit {
                 break;
             case 'Vagrant':
                 this.color = white;
-                this.hp = 15;
+                this.hp = unitSize * 2;
                 this.speedFactor = 1.12;
-                this.damage = 5;
+                this.damage = unitSize / 10;
                 this.projectileLifespanFactor = 0.5;
                 this.attackCooldown = baseCooldown / this.speedFactor;
                 this.projSize = baseProjSize / this.speedFactor;
@@ -544,13 +543,14 @@ class Unit {
 };
 
 class Enemy extends Pip {
-    constructor(xPos = width / 4, yPos = height / 4, size = 1.25 * unitSize + Math.random() * unitSize, health = size, type = 'basic', fillColor = red, velo = baseSpeed / (size / unitSize), direction = Math.random() * TAU, turningIncrement = 0.02) {
+    constructor(xPos = width / 4, yPos = height / 4, size = 1.25 * unitSize + Math.random() * unitSize, health = unitSize, type = 'basic', fillColor = red, velo = baseSpeed / (size / unitSize), direction = Math.random() * TAU, turningIncrement = 0.02) {
         super(xPos, yPos, size, health, fillColor, velo, direction, turningIncrement);
         this.jitter = 20 * this.turn;
         this.bounceable = Math.random() * 2 * bounceableDelay;
         this.angle = Math.random() * TAU;
         this.counter = 0;
         this.type = type;
+        this.hp = this.radius;
     };
     move() {
         if (Math.random() > 0.98) {
@@ -574,9 +574,9 @@ class Enemy extends Pip {
         this.y += dy;
         if (this.type === 'spawner') {
             this.counter++;
-            if (this.counter > baseCooldown * 6) {
+            if (this.counter > baseCooldown * 6 * ((15 - game.difficulty) / (14))) {
                 // game.enemies.push(new Enemy(this.x, this.y, this.radius / 10, this.color)); //! perhaps a different type of mini spawn?
-                game.enemies.push(new Enemy(this.x, this.y, this.radius / 2, this.radius, 'basic', purple, this.speed, Math.random() * TAU, 0.02));
+                game.enemies.push(new Enemy(this.x, this.y, this.radius / 2, this.radius / 2, 'basic', purple, this.speed * 1.5, Math.random() * TAU, 0.02));
                 this.counter = 0;
             };
         };

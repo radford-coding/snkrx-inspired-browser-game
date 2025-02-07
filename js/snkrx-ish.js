@@ -14,7 +14,7 @@ const game = {
     spawnCountdown: 0,
     spawnPoint: spawnPoints[0],
     audioMuted: false,
-    mouseControl: true,
+    mouseControl: false,
     choiceMade: true,
     choices: [],
     arena: 1,
@@ -46,7 +46,7 @@ const playBtn = document.getElementById('begin');
 const settingsIcon = document.getElementById('settings');
 const mouseIcon = document.getElementById('mouse-icon');
 const keyboardIcon = document.getElementById('keyboard-icon');
-keyboardIcon.style.filter = 'invert(30%)';
+mouseIcon.style.filter = 'invert(30%)';
 const audioOnEl = document.getElementById('sound-on');
 const audioOffEl = document.getElementById('sound-off');
 audioOffEl.style.filter = 'invert(30%)';
@@ -129,9 +129,8 @@ const handleDriving = function () {
 
 const init = function () {
     chooseRandomUnitUpgrades();
-    //! starting snake
-    // game.snake.push(unitChoices[Math.floor(Math.random() * (unitChoices.length - 1))]);
-    game.snake.push(new Unit('Rogue'));
+    game.snake.push(unitChoices[Math.floor(Math.random() * (unitChoices.length - 1))]);
+    // game.snake.push(new Unit('Rogue'));
     // game.snake.push(new Unit('Fighter'));
     // game.snake.push(new Unit('Trapper'));
     // game.snake.push(new Unit('Sprayer'));
