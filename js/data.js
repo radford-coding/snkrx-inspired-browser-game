@@ -60,7 +60,6 @@ let bgIndex = bgAudio.length - 1;
 
 const wallAudio = new Audio(deployedAudioPath + 'wall-bounce.mp3' + '?raw=true');
 const hitAudio = new Audio(deployedAudioPath + 'hit.mp3' + '?raw=true');
-// hitAudio.volume = 0;
 const killAudio = new Audio(deployedAudioPath + 'kill.mp3' + '?raw=true');
 const dmgAudio = new Audio(deployedAudioPath + 'dmg.mp3' + '?raw=true');
 const shoot1Audio = new Audio(deployedAudioPath + 'shoot1.mp3' + '?raw=true');
@@ -221,7 +220,6 @@ const clearShopCurrentUnits = function () {
 
 const chooseRandomUnitUpgrades = function () {
     if (game.choices.length === 0) {
-        //! there may be a better way to choose 3 distinct random units
         let selection = unitChoices[Math.floor(Math.random() * unitChoices.length)];
         game.choices.push(selection);
         while (game.choices.includes(selection)) {
@@ -251,7 +249,7 @@ const showShop = function () {
     showShopEl.checked = true;
     setTimeout(() => shopEl.classList.remove('entry-active'), 1000);
     setTimeout(() => shopEl.classList.add('exit-active'), 1000);
-    game.choiceMade = false; //! perhaps duplicated from handleNextArena
+    game.choiceMade = false;
     choiceConfirmationEl.innerText = 'choose an upgrade!';
     labelCurrentUnitsEl.innerText = 'current units';
     showShopCurrentUnits();
@@ -478,7 +476,6 @@ class Unit {
         this.x = x;
         this.y = y;
         this.attackCounter++;
-        // this.drawProjectiles();
     };
     drawProjectiles() {
         if (this.name !== 'Enchanter' && this.name !== 'Vagrant') {
@@ -572,7 +569,7 @@ class Enemy extends Pip {
         } else if (this.x + dx < this.radius || this.x + dx > canvas.width - this.radius) {
             this.angle = Math.PI - this.angle;
             dx = this.speed * Math.cos(this.angle);
-        } else if (game.snake.map(u => calcDist(this.x + dx, this.y + dy, u.x, u.y) < this.radius + u.radius).some(x => x === true)) { // if this enemy's movement will make it touch any unit in the snake, then...
+        } else if (game.snake.map(u => calcDist(this.x + dx, this.y + dy, u.x, u.y) < this.radius + u.radius).some(x => x === true)) {
             snek.hp -= this.hp / 4;
             playAudio('dmg');
             this.remove();
@@ -583,7 +580,6 @@ class Enemy extends Pip {
         if (this.type === 'spawner') {
             this.counter++;
             if (this.counter > baseCooldown * 6 * ((15 - game.difficulty) / (14))) {
-                // game.enemies.push(new Enemy(this.x, this.y, this.radius / 10, this.color)); //! perhaps a different type of mini spawn?
                 game.enemies.push(new Enemy(this.x, this.y, this.radius / 2, this.radius / 2, 'basic', purple, this.speed * 1.5, Math.random() * TAU, 0.02));
                 this.counter = 0;
             };

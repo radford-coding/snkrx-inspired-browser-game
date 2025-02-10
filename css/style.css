@@ -128,7 +128,6 @@ header div h2 {
 }
 
 .upper-right {
-    /* grid-area: settings; */
     grid-column: 2 / span 1;
     grid-row: 1 / span 1;
     display: flex;
@@ -255,7 +254,6 @@ nav p {
     flex-flow: column nowrap;
     align-items: center;
     justify-content: space-between;
-    /* border: 5px solid white; */
 }
 
 .unit-container>h1 {
@@ -276,7 +274,6 @@ nav p {
 }
 
 .choice-container {
-    /* border: 2px solid var(--green); */
     height: 50%;
     width: 100%;
     border-radius: 5px;

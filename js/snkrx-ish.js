@@ -97,7 +97,7 @@ const handleKeyUp = function (e) {
     } else if (e.key === 'Left' || e.key === 'ArrowLeft' || e.key === 'a') {
         leftPressed = false;
     } else if (e.key === ' ' && game.choiceMade && !game.isPlaying) {
-        handleNextArena(); //! sometimes causes problems?
+        handleNextArena();
     };
 };
 
@@ -285,7 +285,6 @@ settingsIcon.addEventListener('click', () => {
 document.addEventListener('keydown', handleKeyDown, false);
 document.addEventListener('keyup', handleKeyUp, false);
 
-//! pull this into its own function
 explanationEls.forEach(c => c.addEventListener('click', (e) => {
     if (!game.choiceMade) {
         let index = Number(e.target.id.slice(-1)) - 1;
