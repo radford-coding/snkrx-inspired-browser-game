@@ -79,15 +79,16 @@ const shoot4Audio = new Audio(deployedAudioPath + 'shoot4.mp3' + '?raw=true');
 });
 
 const difficultyColors = [
-    'lightgreen',
-    'darkgreen',
-    'yellowgreen',
-    'goldenrod',
-    'yellow',
-    'lightorange',
-    'darkorange',
-    'red',
-    'darkred'
+    '#8FF9D5',
+    '#72F6DB',
+    '#56F1E6',
+    '#39E1EC',
+    '#1DC1E5',
+    '#009BDE',
+    '#00B1C5',
+    '#00AA97',
+    '#008E5F',
+    '#007132'
 ];
 
 const spawnFrac = 1 / 5;
@@ -105,7 +106,7 @@ const spawnDuration = 100;
 let baseCooldown = 100;
 let currentCooldown = 100;
 const unitSize = width * 0.03;
-const baseSpeed = width * 0.0045;
+let baseSpeed = width * 0.0045;
 const baseProjSpeed = baseSpeed * 2.25;
 const baseProjSize = unitSize * .3;
 const bounceableDelay = 75;
@@ -198,6 +199,7 @@ const spawnNormalWave = function () {
 
 const generateWave = function () {
     if (game.enemies.length === 0 && game.wave <= game.arena) {
+        baseSpeed *= (game.difficulty + 9) / 10;
         spawnNormalWave();
     };
 };
@@ -208,7 +210,7 @@ const showShopCurrentUnits = function () {
         shopCurrentUnits[i].style.display = 'flex';
         shopCurrentUnits[i].innerText = game.snake[i].level;
         shopCurrentUnitExplanations[i].innerHTML = `${game.snake[i].name}:<br>level ${game.snake[i].level}<br>${game.snake[i].description}`;
-        nextArenaButton.style.setProperty('--nab-hover-color', difficultyColors[game.difficulty - 1]);
+        document.querySelector('body').style.setProperty('--btn-hover-color', difficultyColors[game.difficulty - 1]);
     };
 };
 
@@ -239,7 +241,7 @@ const chooseRandomUnitUpgrades = function () {
 
 const recalculateSnakeSpeed = function () {
     snek.speed = baseSpeed;
-    snek.speed = game.snake.map(u => u.speedFactor).reduce((accumulator, x) => accumulator * x, baseSpeed);
+    snek.speed = game.snake.map(u => Math.pow(u.speedFactor, u.level)).reduce((accumulator, x) => accumulator * x, baseSpeed);
 };
 
 const showShop = function () {
@@ -285,6 +287,8 @@ const handleNextArena = function () {
 };
 
 const showLossMessage = function () {
+    lossButtonReplayEasier.style.setProperty('--btn-hover-easier', difficultyColors[Math.max(game.difficulty - 2, 0)]);
+    lossButtonReplay.style.setProperty('--btn-hover-same', difficultyColors[game.difficulty - 1]);
     if (!game.audioMuted) {
         lossAudio.play();
     };
@@ -294,6 +298,8 @@ const showLossMessage = function () {
 };
 
 const showWinMessage = function () {
+    winButtonReplayHarder.style.setProperty('--btn-hover-harder', difficultyColors[Math.min(difficultyColors.length - 1, game.difficulty)]);
+    winButtonReplay.style.setProperty('--btn-hover-same', difficultyColors[game.difficulty - 1]);
     if (!game.audioMuted) {
         winAudio.play();
     };
@@ -318,7 +324,7 @@ const resetGame = function (diff) {
     arenaNumEl.innerText = `arena ${game.arena}`;
     game.wave = 0;
     waveNumEl.innerText = `wave ${game.wave}/${1 + game.arena}`;
-    game.snake = [unitChoices[Math.floor(Math.random() * (unitChoices.length - 1))]];
+    init();
     game.enemies = [];
     clearShopCurrentUnits();
     bgAudio[bgIndex].volume = bgAudioVolume;

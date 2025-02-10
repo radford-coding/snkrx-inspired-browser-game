@@ -130,9 +130,11 @@ const handleDriving = function () {
 
 const init = function () {
     chooseRandomUnitUpgrades();
+    game.snake = [];
     let r1 = Math.floor(Math.random() * 2);
     let r2 = Math.floor(Math.random() * 3) + 2;
     game.snake.push(unitChoices[r1], unitChoices[r2]);
+    document.querySelector('body').style.setProperty('--btn-hover-color', difficultyColors[game.difficulty - 1]);
 };
 init();
 
