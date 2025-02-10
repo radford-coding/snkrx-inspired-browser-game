@@ -268,7 +268,9 @@ const handleNextArena = function () {
         waveNumEl.innerText = `wave ${game.wave}/${1 + game.arena}`;
         game.isPlaying = true;
         game.choiceMade = false;
-        startAudio.play();
+        if (!game.audioMuted) {
+            startAudio.play();
+        };
         game.snake.forEach((u) => {
             u.projectiles = [];
         });
@@ -285,14 +287,18 @@ const handleNextArena = function () {
 };
 
 const showLossMessage = function () {
-    lossAudio.play();
+    if (!game.audioMuted) {
+        lossAudio.play();
+    };
     game.isPlaying = false;
     lossEl.style.display = 'grid';
     showLossEl.checked = false;
 };
 
 const showWinMessage = function () {
-    winAudio.play();
+    if (!game.audioMuted) {
+        winAudio.play();
+    };
     game.isPlaying = false;
     winEl.style.display = 'grid';
     showWinEl.checked = false;
@@ -318,7 +324,9 @@ const resetGame = function (diff) {
     game.enemies = [];
     clearShopCurrentUnits();
     bgAudio[bgIndex].volume = bgAudioVolume;
-    bgAudio[bgIndex].play();
+    if (!game.audioMuted) {
+        bgAudio[bgIndex].play();
+    };
     showShopEl.checked = false;
     showLossEl.checked = false;
     showWinEl.checked = false;
@@ -645,7 +653,6 @@ class Snek extends Pip {
         };
     };
     draw() {
-        // console.log(`${this.hp}/${this.maxHP}`);
         if (this.hp <= 0) {
             game.isPlaying = false;
             bgAudio.forEach(a => a.volume = 0);
@@ -672,9 +679,5 @@ class Snek extends Pip {
     render() {
         this.move();
         this.draw();
-        // console.log(this.speed);
     };
 };
-
-
-

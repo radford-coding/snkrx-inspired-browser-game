@@ -6,7 +6,6 @@ let elapsed = 0;
 let fpsInterval = 1000 / 65;
 
 let snek = new Snek();
-console.log(`hp: ${snek.hp}`);
 
 /*-------------- Constants -------------*/
 
@@ -27,11 +26,11 @@ const game = {
 
 const unitChoices = [
     new Unit('Rogue'),
-    new Unit('Fighter'),
+    new Unit('Ranger'),
     new Unit('Trapper'),
     new Unit('Sprayer'),
-    new Unit('Ranger'),
     new Unit('Vagrant'),
+    new Unit('Fighter'),
     new Unit('Enchanter')
 ];
 
@@ -131,22 +130,15 @@ const handleDriving = function () {
 
 const init = function () {
     chooseRandomUnitUpgrades();
-    game.snake.push(unitChoices[Math.floor(Math.random() * (unitChoices.length - 1))]);
-    // game.snake.push(new Unit('Rogue'));
-    // game.snake.push(new Unit('Fighter'));
-    // game.snake.push(new Unit('Trapper'));
-    // game.snake.push(new Unit('Sprayer'));
-    // game.snake.push(new Unit('Ranger'));
-    // game.snake.push(new Unit('Enchanter'));
-    // game.snake.push(new Unit('Vagrant'));
+    let r1 = Math.floor(Math.random() * 2);
+    let r2 = Math.floor(Math.random() * 3) + 2;
+    game.snake.push(unitChoices[r1], unitChoices[r2]);
 };
 init();
 
 
 
 const draw = function () {
-
-    console.log(snek.hp, snek.maxHP);
     requestAnimationFrame(draw);
     now = Date.now();
     elapsed = now - then;
@@ -185,7 +177,9 @@ const draw = function () {
 
 document.getElementById('begin').addEventListener('click', () => {
     document.getElementById('show-start').checked = true;
-    startAudio.play();
+    if (!game.audioMuted) {
+        startAudio.play();
+    };
     setTimeout(() => {
         document.querySelector('.welcome').style.display = 'none';
     }, 1000);
@@ -194,7 +188,9 @@ document.getElementById('begin').addEventListener('click', () => {
 
 lossButtonReplay.addEventListener('click', (e) => {
     showLossEl.checked = true;
-    startAudio.play();
+    if (!game.audioMuted) {
+        startAudio.play();
+    };
     resetGame(game.difficulty);
     setTimeout(() => {
         lossEl.style.display = 'none';
@@ -204,7 +200,9 @@ lossButtonReplay.addEventListener('click', (e) => {
 
 winButtonReplay.addEventListener('click', (e) => {
     showWinEl.checked = true;
-    startAudio.play();
+    if (!game.audioMuted) {
+        startAudio.play();
+    };
     resetGame(game.difficulty);
     setTimeout(() => {
         winEl.style.display = 'none';
@@ -214,7 +212,9 @@ winButtonReplay.addEventListener('click', (e) => {
 
 lossButtonReplayEasier.addEventListener('click', (e) => {
     showLossEl.checked = true;
-    startAudio.play();
+    if (!game.audioMuted) {
+        startAudio.play();
+    };
     resetGame(game.difficulty - 1);
     setTimeout(() => {
         lossEl.style.display = 'none';
@@ -224,7 +224,9 @@ lossButtonReplayEasier.addEventListener('click', (e) => {
 
 winButtonReplayHarder.addEventListener('click', (e) => {
     showWinEl.checked = true;
-    startAudio.play();
+    if (!game.audioMuted) {
+        startAudio.play();
+    };
     resetGame(game.difficulty + 1);
     setTimeout(() => {
         winEl.style.display = 'none';
@@ -295,7 +297,9 @@ explanationEls.forEach(c => c.addEventListener('click', (e) => {
             if (chosenUnit.name === 'Enchanter') {
                 baseCooldown *= 0.85;
             };
-            upgradeAudio.play();
+            if (!game.audioMuted) {
+                upgradeAudio.play();
+            };
             choiceConfirmationEl.innerText = `${chosenUnit.name} chosen!`;
         } else {
             game.snake.push(chosenUnit);
@@ -304,7 +308,9 @@ explanationEls.forEach(c => c.addEventListener('click', (e) => {
             if (chosenUnit.name === 'Enchanter') {
                 baseCooldown *= 0.85;
             };
-            upgradeAudio.play();
+            if (!game.audioMuted) {
+                upgradeAudio.play();
+            };
             choiceConfirmationEl.innerText = `${chosenUnit.name} chosen!`;
         };
         game.choiceMade = true;
